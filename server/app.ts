@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import recipeRoutes from './routes/recipes';
 
 dotenv.config();
 
@@ -17,8 +18,6 @@ mongoose
 app.use(express.json());
 
 // Routes
-
-
-
+app.use('/api/recipes', recipeRoutes);
 
 export default app;
