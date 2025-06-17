@@ -1,24 +1,8 @@
 import { useState, useEffect } from 'react';
-
-interface BaseRecipe {
-  title: string;
-  description: string;
-  ingredients: Array<{ name: string; amount: string }>;
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-}
-
-interface CreateRecipe extends BaseRecipe {}
-
-interface EditRecipe extends BaseRecipe {
-  _id: string;
-}
-
-type Recipe = CreateRecipe | EditRecipe;
+import type { Recipe } from '../types/recipe';
 
 interface RecipeFormProps {
-  onSubmit: (recipe: Recipe) => void;
+  onSubmit: (recipe: Omit<Recipe, '_id'>) => void;
   initialRecipe?: Recipe;
   isEditing?: boolean;
 }
@@ -28,29 +12,30 @@ export default function RecipeForm({
   initialRecipe,
   isEditing = false,
 }: RecipeFormProps) {
-  const [recipe, setRecipe] = useState<Recipe>(() => {
+  const [formData, setFormData] = useState<Omit<Recipe, '_id'>>(() => {
     if (initialRecipe) {
-      return initialRecipe;
+      const { _id, createdAt, ...rest } = initialRecipe;
+      return rest;
     }
     return {
       title: '',
       description: '',
       ingredients: [{ name: '', amount: '' }],
       instructions: [''],
-      cookingTime: 30,
-      servings: 4,
+      cookingTime: 0,
+      servings: 1,
     };
   });
 
   useEffect(() => {
     if (initialRecipe) {
-      setRecipe(initialRecipe);
+      setFormData(initialRecipe);
     }
   }, [initialRecipe]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(recipe);
+    onSubmit(formData);
   };
 
   const updateIngredient = (
@@ -58,33 +43,33 @@ export default function RecipeForm({
     field: 'name' | 'amount',
     value: string
   ) => {
-    const newIngredients = [...recipe.ingredients];
+    const newIngredients = [...formData.ingredients];
     newIngredients[index] = { ...newIngredients[index], [field]: value };
-    setRecipe({ ...recipe, ingredients: newIngredients });
+    setFormData({ ...formData, ingredients: newIngredients });
   };
 
   const addIngredient = () => {
-    setRecipe({
-      ...recipe,
-      ingredients: [...recipe.ingredients, { name: '', amount: '' }],
+    setFormData({
+      ...formData,
+      ingredients: [...formData.ingredients, { name: '', amount: '' }],
     });
   };
 
   const removeIngredient = (index: number) => {
-    const newIngredients = recipe.ingredients.filter((_, i) => i !== index);
-    setRecipe({ ...recipe, ingredients: newIngredients });
+    const newIngredients = formData.ingredients.filter((_, i) => i !== index);
+    setFormData({ ...formData, ingredients: newIngredients });
   };
 
   const addInstruction = () => {
-    setRecipe({
-      ...recipe,
-      instructions: [...recipe.instructions, ''],
+    setFormData({
+      ...formData,
+      instructions: [...formData.instructions, ''],
     });
   };
 
   const removeInstruction = (index: number) => {
-    const newInstructions = recipe.instructions.filter((_, i) => i !== index);
-    setRecipe({ ...recipe, instructions: newInstructions });
+    const newInstructions = formData.instructions.filter((_, i) => i !== index);
+    setFormData({ ...formData, instructions: newInstructions });
   };
 
   return (
@@ -104,8 +89,10 @@ export default function RecipeForm({
             </label>
             <input
               type='text'
-              value={recipe.title}
-              onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
               placeholder='Enter recipe title'
               required
@@ -116,9 +103,9 @@ export default function RecipeForm({
               Description
             </label>
             <textarea
-              value={recipe.description}
+              value={formData.description}
               onChange={(e) =>
-                setRecipe({ ...recipe, description: e.target.value })
+                setFormData({ ...formData, description: e.target.value })
               }
               className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
               placeholder='Describe your recipe'
@@ -141,7 +128,7 @@ export default function RecipeForm({
             </button>
           </div>
           <div className='space-y-3'>
-            {recipe.ingredients.map((ingredient, index) => (
+            {formData.ingredients.map((ingredient, index) => (
               <div key={index} className='flex gap-4'>
                 <div className='flex-1'>
                   <input
@@ -167,7 +154,7 @@ export default function RecipeForm({
                     required
                   />
                 </div>
-                {recipe.ingredients.length > 1 && (
+                {formData.ingredients.length > 1 && (
                   <button
                     type='button'
                     onClick={() => removeIngredient(index)}
@@ -196,7 +183,7 @@ export default function RecipeForm({
             </button>
           </div>
           <div className='space-y-4'>
-            {recipe.instructions.map((instruction, index) => (
+            {formData.instructions.map((instruction, index) => (
               <div key={index} className='flex gap-4'>
                 <div className='flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-medium'>
                   {index + 1}
@@ -205,9 +192,12 @@ export default function RecipeForm({
                   <textarea
                     value={instruction}
                     onChange={(e) => {
-                      const newInstructions = [...recipe.instructions];
+                      const newInstructions = [...formData.instructions];
                       newInstructions[index] = e.target.value;
-                      setRecipe({ ...recipe, instructions: newInstructions });
+                      setFormData({
+                        ...formData,
+                        instructions: newInstructions,
+                      });
                     }}
                     className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                     placeholder={`Step ${index + 1}`}
@@ -215,7 +205,7 @@ export default function RecipeForm({
                     required
                   />
                 </div>
-                {recipe.instructions.length > 1 && (
+                {formData.instructions.length > 1 && (
                   <button
                     type='button'
                     onClick={() => removeInstruction(index)}
@@ -241,10 +231,10 @@ export default function RecipeForm({
               </label>
               <input
                 type='number'
-                value={recipe.cookingTime}
+                value={formData.cookingTime}
                 onChange={(e) =>
-                  setRecipe({
-                    ...recipe,
+                  setFormData({
+                    ...formData,
                     cookingTime: parseInt(e.target.value),
                   })
                 }
@@ -259,9 +249,12 @@ export default function RecipeForm({
               </label>
               <input
                 type='number'
-                value={recipe.servings}
+                value={formData.servings}
                 onChange={(e) =>
-                  setRecipe({ ...recipe, servings: parseInt(e.target.value) })
+                  setFormData({
+                    ...formData,
+                    servings: parseInt(e.target.value),
+                  })
                 }
                 min='1'
                 className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'

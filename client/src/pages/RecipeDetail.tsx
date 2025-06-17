@@ -1,68 +1,19 @@
-import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import NutritionLabel from '../components/NutritionLabel';
-
-interface Recipe {
-  _id: string;
-  title: string;
-  description: string;
-  ingredients: Array<{ name: string; amount: string }>;
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-  createdAt: string;
-}
+import { useRecipe, useDeleteRecipe } from '../queries/useRecipes';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetch(`http://localhost:3001/api/recipes/${id}`);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch recipe');
-        }
-
-        const data = await response.json();
-        setRecipe(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipe();
-  }, [id]);
+  const { data: recipe, isLoading, error } = useRecipe(id!);
+  const deleteRecipe = useDeleteRecipe();
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this recipe?')) {
-      try {
-        const response = await fetch(
-          `http://localhost:3001/api/recipes/${id}`,
-          {
-            method: 'DELETE',
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to delete recipe');
-        }
-
-        navigate('/recipes');
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to delete recipe'
-        );
-      }
+    try {
+      await deleteRecipe.mutateAsync(id!);
+      navigate('/recipes');
+    } catch (err) {
+      console.error('Failed to delete recipe:', err);
     }
   };
 
@@ -78,7 +29,9 @@ export default function RecipeDetail() {
   if (error || !recipe) {
     return (
       <div className='text-center py-8'>
-        <p className='text-red-500'>{error || 'Recipe not found'}</p>
+        <p className='text-red-500'>
+          {error instanceof Error ? error.message : 'Recipe not found'}
+        </p>
         <Link
           to='/recipes'
           className='text-blue-500 hover:text-blue-600 mt-4 inline-block'
