@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, Link, useNavigate } from 'react-router';
+import NutritionLabel from '../components/NutritionLabel';
 
 interface Recipe {
   _id: string;
@@ -14,6 +15,7 @@ interface Recipe {
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +43,29 @@ export default function RecipeDetail() {
     fetchRecipe();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this recipe?')) {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/recipes/${id}`,
+          {
+            method: 'DELETE',
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to delete recipe');
+        }
+
+        navigate('/recipes');
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to delete recipe'
+        );
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className='text-center py-8'>
@@ -66,12 +91,28 @@ export default function RecipeDetail() {
 
   return (
     <div className='max-w-4xl mx-auto py-8 px-4'>
-      <Link
-        to='/recipes'
-        className='text-blue-500 hover:text-blue-600 mb-6 inline-block'
-      >
-        ← Back to Recipes
-      </Link>
+      <div className='flex justify-between items-center mb-6'>
+        <Link
+          to='/recipes'
+          className='text-blue-500 hover:text-blue-600 inline-block'
+        >
+          ← Back to Recipes
+        </Link>
+        <div className='space-x-4'>
+          <Link
+            to={`/recipes/${id}/edit`}
+            className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors'
+          >
+            Edit Recipe
+          </Link>
+          <button
+            onClick={handleDelete}
+            className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors'
+          >
+            Delete Recipe
+          </button>
+        </div>
+      </div>
 
       <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
         <div className='p-8'>
@@ -117,68 +158,7 @@ export default function RecipeDetail() {
             </div>
 
             {/* Right Column - Nutrition Label */}
-            <div className='bg-white border-2 border-black p-4 font-mono'>
-              <div className='text-center border-b-2 border-black pb-2 mb-2'>
-                <h3 className='text-lg font-bold'>Nutrition Facts</h3>
-                <p className='text-sm'>
-                  Serving Size: {recipe.servings} servings
-                </p>
-              </div>
-
-              <div className='border-b-2 border-black pb-2 mb-2'>
-                <div className='flex justify-between'>
-                  <span>Amount Per Serving</span>
-                  <span>Calories</span>
-                </div>
-              </div>
-
-              <div className='space-y-1 text-sm'>
-                <div className='flex justify-between'>
-                  <span>Total Fat</span>
-                  <span>0g</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Saturated Fat</span>
-                  <span>0g</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Trans Fat</span>
-                  <span>0g</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Cholesterol</span>
-                  <span>0mg</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Sodium</span>
-                  <span>0mg</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Total Carbohydrate</span>
-                  <span>0g</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Dietary Fiber</span>
-                  <span>0g</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Total Sugars</span>
-                  <span>0g</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Protein</span>
-                  <span>0g</span>
-                </div>
-              </div>
-
-              <div className='mt-4 text-xs'>
-                <p>* Percent Daily Values are based on a 2,000 calorie diet.</p>
-                <p>
-                  Your daily values may be higher or lower depending on your
-                  calorie needs.
-                </p>
-              </div>
-            </div>
+            <NutritionLabel servings={recipe.servings} />
           </div>
 
           <div className='mt-8 flex items-center justify-between text-sm text-gray-500'>
