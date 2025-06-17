@@ -55,7 +55,6 @@ const createRecipe = async (
   next: NextFunction
 ) => {
   try {
-    console.log('create recipe', req.body);
     const recipe = new Recipe(req.body);
     await recipe.save();
     res.status(201).json(recipe);
