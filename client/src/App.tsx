@@ -18,7 +18,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path='/' element={<HomePage />} />
             <Route path='/recipes' element={<BrowsePage />} />
-            <Route path='/recipes/new' element={<CreateRecipe />} />
+            <Route path='/recipes/create' element={<CreateRecipe />} />
             <Route path='/recipes/:id' element={<RecipeDetail />} />
             <Route path='/recipes/:id/edit' element={<EditRecipe />} />
           </Route>
