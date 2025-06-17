@@ -1,63 +1,20 @@
-import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import RecipeForm from '../components/RecipeForm';
-
-interface Recipe {
-  title: string;
-  description: string;
-  ingredients: Array<{ name: string; amount: string }>;
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-}
+import { useRecipe, useUpdateRecipe } from '../queries/useRecipes';
+import type { Recipe } from '../types/recipe';
 
 export default function EditRecipe() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: recipe, isLoading, error } = useRecipe(id!);
+  const updateRecipe = useUpdateRecipe();
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetch(`http://localhost:3001/api/recipes/${id}`);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch recipe');
-        }
-
-        const data = await response.json();
-        setRecipe(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipe();
-  }, [id]);
-
-  const handleSubmit = async (updatedRecipe: Recipe) => {
+  const handleSubmit = async (updatedRecipe: Omit<Recipe, '_id'>) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/recipes/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedRecipe),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update recipe');
-      }
-
+      await updateRecipe.mutateAsync({ id: id!, recipe: updatedRecipe });
       navigate(`/recipes/${id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update recipe');
+      console.error('Failed to update recipe:', err);
     }
   };
 
@@ -73,7 +30,9 @@ export default function EditRecipe() {
   if (error || !recipe) {
     return (
       <div className='text-center py-8'>
-        <p className='text-red-500'>{error || 'Recipe not found'}</p>
+        <p className='text-red-500'>
+          {error instanceof Error ? error.message : 'Recipe not found'}
+        </p>
         <button
           onClick={() => navigate('/recipes')}
           className='text-blue-500 hover:text-blue-600 mt-4'

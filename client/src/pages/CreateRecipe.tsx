@@ -1,33 +1,16 @@
 import { useNavigate } from 'react-router';
 import RecipeForm from '../components/RecipeForm';
-
-interface CreateRecipe {
-  title: string;
-  description: string;
-  ingredients: Array<{ name: string; amount: string }>;
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-}
+import { useCreateRecipe } from '../queries/useRecipes';
+import type { Recipe } from '../types/recipe';
 
 export default function CreateRecipe() {
   const navigate = useNavigate();
+  const createRecipe = useCreateRecipe();
 
-  const handleSubmit = async (recipe: CreateRecipe) => {
+  const handleSubmit = async (recipe: Omit<Recipe, '_id'>) => {
     try {
-      const response = await fetch('http://localhost:3001/api/recipes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(recipe),
-      });
-
-      if (response.ok) {
-        navigate('/recipes');
-      } else {
-        console.error('Failed to create recipe');
-      }
+      await createRecipe.mutateAsync(recipe);
+      navigate('/recipes');
     } catch (error) {
       console.error('Error creating recipe:', error);
     }
