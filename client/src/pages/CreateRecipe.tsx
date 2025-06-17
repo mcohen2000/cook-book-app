@@ -1,10 +1,19 @@
 import { useNavigate } from 'react-router';
 import RecipeForm from '../components/RecipeForm';
 
+interface CreateRecipe {
+  title: string;
+  description: string;
+  ingredients: Array<{ name: string; amount: string }>;
+  instructions: string[];
+  cookingTime: number;
+  servings: number;
+}
+
 export default function CreateRecipe() {
   const navigate = useNavigate();
 
-  const handleSubmit = async (recipe: any) => {
+  const handleSubmit = async (recipe: CreateRecipe) => {
     try {
       const response = await fetch('http://localhost:3001/api/recipes', {
         method: 'POST',

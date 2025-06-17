@@ -1,7 +1,7 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
 import Recipe from '../models/Recipe';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Get all recipes with optional search
 const getAllRecipes = async (
@@ -40,6 +40,7 @@ const getRecipeById = async (
     const recipe = await Recipe.findById(req.params.id);
     if (!recipe) {
       res.status(404).json({ message: 'Recipe not found' });
+      return;
     }
     res.json(recipe);
   } catch (error) {
@@ -63,8 +64,53 @@ const createRecipe = async (
   }
 };
 
+// Update a recipe
+const updateRecipe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!recipe) {
+      res.status(404).json({ message: 'Recipe not found' });
+      return;
+    }
+
+    res.json(recipe);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete a recipe
+const deleteRecipe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const recipe = await Recipe.findByIdAndDelete(req.params.id);
+
+    if (!recipe) {
+      res.status(404).json({ message: 'Recipe not found' });
+      return;
+    }
+
+    res.json({ message: 'Recipe deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 router.get('/', getAllRecipes);
 router.get('/:id', getRecipeById);
 router.post('/', createRecipe);
+router.patch('/:id', updateRecipe);
+router.delete('/:id', deleteRecipe);
 
 export default router;
