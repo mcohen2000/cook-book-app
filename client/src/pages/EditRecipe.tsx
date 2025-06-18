@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, Link } from 'react-router';
 import RecipeForm from '../components/RecipeForm';
 import { useRecipe, useUpdateRecipe } from '../queries/useRecipes';
 import type { Recipe } from '../types/recipe';
@@ -50,11 +50,32 @@ export default function EditRecipe() {
           <h1 className='text-3xl font-bold text-gray-900'>Edit Recipe</h1>
           <p className='mt-2 text-gray-600'>Update your recipe details</p>
         </div>
-        <RecipeForm
-          onSubmit={handleSubmit}
-          initialRecipe={recipe}
-          isEditing={true}
-        />
+        <div className='max-w-3xl mx-auto'>
+          <Link
+            to={`/recipes/${id}`}
+            className='inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors mb-4'
+          >
+            <svg
+              className='w-5 h-5 mr-2'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M10 19l-7-7m0 0l7-7m-7 7h18'
+              />
+            </svg>
+            Back to Recipe
+          </Link>
+          <RecipeForm
+            onSubmit={handleSubmit}
+            initialRecipe={recipe}
+            isEditing={true}
+          />
+        </div>
       </div>
     </div>
   );
