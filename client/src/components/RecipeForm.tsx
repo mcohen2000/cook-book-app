@@ -82,7 +82,7 @@ export default function RecipeForm({
   };
 
   return (
-    <div className='max-w-4xl mx-auto py-8 px-4'>
+    <>
       <div className='flex justify-between items-center mb-6'>
         <BackButton to={backTo} text={backText} />
       </div>
@@ -293,6 +293,6 @@ export default function RecipeForm({
           </div>
         </div>
       </form>
-    </div>
+    </>
   );
 }

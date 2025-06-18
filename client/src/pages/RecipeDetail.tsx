@@ -44,7 +44,7 @@ export default function RecipeDetail() {
   }
 
   return (
-    <div className='max-w-4xl mx-auto py-8 px-4'>
+    <>
       <div className='flex justify-between items-center mb-6'>
         <BackButton to='/recipes' text='Back to Recipes' />
         <div className='space-x-4'>
@@ -69,7 +69,7 @@ export default function RecipeDetail() {
           </Link>
           <button
             onClick={handleDelete}
-            className='inline-flex items-center px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-red-500 hover:text-white transition-colors'
+            className='inline-flex items-center px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
           >
             <svg
               className='w-5 h-5 mr-2'
@@ -172,6 +172,6 @@ export default function RecipeDetail() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

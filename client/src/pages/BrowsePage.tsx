@@ -53,7 +53,7 @@ export default function BrowsePage() {
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
-        <h2 className='text-2xl font-bold text-gray-900'>Recipes</h2>
+        <h2 className='text-2xl font-bold text-gray-900 px-4'>Recipes</h2>
         <form onSubmit={handleSearch} className='flex gap-2'>
           <input
             type='text'
