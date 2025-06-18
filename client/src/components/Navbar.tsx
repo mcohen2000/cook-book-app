@@ -5,7 +5,9 @@ const Navbar = () => {
     <header className='bg-white shadow'>
       <nav className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between h-16 items-center flex-row'>
-          <h1 className='text-2xl font-bold text-blue-500'>Cook Book</h1>
+          <Link to='/'>
+            <h1 className='text-2xl font-bold text-blue-500'>Cook Book</h1>
+          </Link>
           <div className='flex gap-4'>
             <Link
               to='/recipes'
