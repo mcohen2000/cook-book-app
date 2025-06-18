@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router';
 import NutritionLabel from '../components/NutritionLabel';
 import { useRecipe, useDeleteRecipe } from '../queries/useRecipes';
+import BackButton from '../components/BackButton';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -45,25 +46,7 @@ export default function RecipeDetail() {
   return (
     <div className='max-w-4xl mx-auto py-8 px-4'>
       <div className='flex justify-between items-center mb-6'>
-        <Link
-          to='/recipes'
-          className='text-gray-600 hover:text-blue-600 inline-flex items-center transition-colors'
-        >
-          <svg
-            className='w-5 h-5 mr-2'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M10 19l-7-7m0 0l7-7m-7 7h18'
-            />
-          </svg>
-          Back to Recipes
-        </Link>
+        <BackButton to='/recipes' text='Back to Recipes' />
         <div className='space-x-4'>
           <Link
             to={`/recipes/${id}/edit`}
