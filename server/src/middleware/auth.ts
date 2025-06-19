@@ -16,7 +16,10 @@ declare global {
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    // Get token from cookie
+    if (!process.env.COOKIE_NAME) return;
+
+    const token = req.cookies[process.env.COOKIE_NAME];
 
     if (!token) {
       throw new Error();
@@ -32,6 +35,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Please authenticate.' });
+    res.status(401).json({ error: String(error) });
   }
 };

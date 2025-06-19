@@ -119,4 +119,16 @@ router.get('/auth', auth, async (req, res) => {
   });
 });
 
+// Logout user
+router.post('/logout', (req: Request, res: Response) => {
+  if (!process.env.COOKIE_NAME || !process.env.COOKIE_URL) return;
+  res.clearCookie(process.env.COOKIE_NAME, {
+    domain: process.env.COOKIE_URL,
+    httpOnly: true,
+    sameSite: process.env.SECURE_COOKIES === 'true' ? 'none' : 'strict',
+    secure: process.env.SECURE_COOKIES === 'true' ? true : false,
+  });
+  res.json({ message: 'Logged out successfully' });
+});
+
 export default router;
