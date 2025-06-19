@@ -1,43 +1,34 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import BackButton from '../components/BackButton';
+import { useMutation } from '@tanstack/react-query';
+import { login } from '../services/userService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Login() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['auth'] });
+      navigate('/recipes');
+    },
+    onError: (err: any) => {
+      setError(err.message || 'Error logging in');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    try {
-      const response = await fetch('http://localhost:3001/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error logging in');
-      }
-
-      // Store token in localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      // Redirect to recipes page
-      navigate('/recipes');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error logging in');
-    }
+    mutation.mutate(formData);
   };
 
   return (
@@ -52,7 +43,7 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className='space-y-6'>
-          {error && (
+          {(error || mutation.isError) && (
             <div className='bg-red-50 text-red-500 p-3 rounded-md'>{error}</div>
           )}
 
@@ -93,9 +84,11 @@ export default function Login() {
             <button
               type='submit'
               className='px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white transition-colors bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-60'
-              disabled={!formData.email || !formData.password}
+              disabled={
+                !formData.email || !formData.password || mutation.isPending
+              }
             >
-              Sign In
+              {mutation.isPending ? 'Signing In...' : 'Sign In'}
             </button>
           </div>
         </form>

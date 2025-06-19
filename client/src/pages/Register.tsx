@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import BackButton from '../components/BackButton';
+import { useMutation } from '@tanstack/react-query';
+import { register } from '../services/userService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Register() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,43 +16,29 @@ export default function Register() {
   });
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['auth'] });
+      navigate('/recipes');
+    },
+    onError: (err: any) => {
+      setError(err.message || 'Error registering user');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
-    try {
-      const response = await fetch('http://localhost:3001/api/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error registering user');
-      }
-
-      // Store token in localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      // Redirect to recipes page
-      navigate('/recipes');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error registering user');
-    }
+    mutation.mutate({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   return (
@@ -63,7 +53,7 @@ export default function Register() {
         </div>
 
         <form onSubmit={handleSubmit} className='space-y-6'>
-          {error && (
+          {(error || mutation.isError) && (
             <div className='bg-red-50 text-red-500 p-3 rounded-md'>{error}</div>
           )}
 
@@ -140,10 +130,11 @@ export default function Register() {
                 !formData.name ||
                 !formData.email ||
                 !formData.password ||
-                !formData.confirmPassword
+                !formData.confirmPassword ||
+                mutation.isPending
               }
             >
-              Register
+              {mutation.isPending ? 'Registering...' : 'Register'}
             </button>
           </div>
         </form>

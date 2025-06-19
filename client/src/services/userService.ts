@@ -1,0 +1,59 @@
+const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api/users`;
+
+export async function login({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const response = await fetch(`${API_URL}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error logging in');
+  return data;
+}
+
+export async function register({
+  name,
+  email,
+  password,
+}: {
+  name: string;
+  email: string;
+  password: string;
+}) {
+  const response = await fetch(`${API_URL}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error registering user');
+  return data;
+}
+
+export async function checkAuth() {
+  const response = await fetch(`${API_URL}/auth`, {
+    credentials: 'include',
+  });
+  if (response.status === 401) return null;
+  const data = await response.json();
+  return data;
+}
+
+export async function logout() {
+  const response = await fetch(`${API_URL}/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Error logging out');
+  }
+  return true;
+}
