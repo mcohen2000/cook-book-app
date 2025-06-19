@@ -22,6 +22,20 @@ const Navbar = () => {
               Create Recipe
             </Link>
           </div>
+          <div className='flex gap-4'>
+            <Link
+              to='/register'
+              className='text-gray-600 hover:text-gray-900 px-4 py-2'
+            >
+              Register
+            </Link>
+            <Link
+              to='/login'
+              className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
+            >
+              Login
+            </Link>
+          </div>
         </div>
       </nav>
     </header>
