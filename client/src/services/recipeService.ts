@@ -1,10 +1,17 @@
 import type { Recipe } from '../types/recipe';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api`;
 
 export const recipeService = {
-  getAllRecipes: async (): Promise<Recipe[]> => {
-    const response = await fetch(`${API_URL}/recipes`);
+  getRecipes: async (search: string = '') => {
+    const response = await fetch(
+      `${API_URL}/recipes${
+        search ? `?search=${encodeURIComponent(search)}` : ''
+      }`,
+      {
+        credentials: 'include',
+      }
+    );
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
@@ -26,6 +33,7 @@ export const recipeService = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(recipe),
+      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Failed to create recipe');
@@ -43,6 +51,7 @@ export const recipeService = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(recipe),
+      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Failed to update recipe');
@@ -53,6 +62,7 @@ export const recipeService = {
   deleteRecipe: async (id: string): Promise<void> => {
     const response = await fetch(`${API_URL}/recipes/${id}`, {
       method: 'DELETE',
+      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Failed to delete recipe');

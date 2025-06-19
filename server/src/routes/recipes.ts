@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
-import Recipe from '../models/Recipe';
+import Recipe from '../../models/Recipe';
 
 const router: Router = express.Router();
 

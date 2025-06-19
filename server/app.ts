@@ -2,16 +2,24 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import recipeRoutes from './routes/recipes';
-
+import recipeRoutes from './src/routes/recipes';
+import userRoutes from './src/routes/users';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    exposedHeaders: 'Set-Cookie',
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 // Database connection
 mongoose
@@ -21,6 +29,7 @@ mongoose
 
 // Routes
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling middleware
 app.use(

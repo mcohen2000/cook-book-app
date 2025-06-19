@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 import RecipeCard from '../components/RecipeCard';
+import { useRecipes } from '../queries/useRecipes';
 
 interface Recipe {
   _id: string;
@@ -13,41 +15,24 @@ interface Recipe {
 }
 
 export default function BrowsePage() {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchRecipes = async (search: string = '') => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response = await fetch(
-        `http://localhost:3001/api/recipes${
-          search ? `?search=${encodeURIComponent(search)}` : ''
-        }`
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch recipes');
-      }
-
-      const data = await response.json();
-      setRecipes(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(search);
 
   useEffect(() => {
-    fetchRecipes();
-  }, []);
+    setSearchQuery(search);
+  }, [search]);
+
+  const {
+    data: recipes = [],
+    isLoading,
+    error,
+    isFetching,
+  } = useRecipes(search);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchRecipes(searchQuery);
+    setSearchParams(searchQuery ? { search: searchQuery } : {});
   };
 
   return (
@@ -71,22 +56,22 @@ export default function BrowsePage() {
         </form>
       </div>
 
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <div className='text-center py-8'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
           <p className='mt-2 text-gray-600'>Loading recipes...</p>
         </div>
       ) : error ? (
         <div className='text-center py-8'>
-          <p className='text-red-500'>{error}</p>
+          <p className='text-red-500'>{(error as Error).message}</p>
         </div>
-      ) : recipes.length === 0 ? (
+      ) : (recipes as Recipe[]).length === 0 ? (
         <div className='text-center py-8'>
           <p className='text-gray-600'>No recipes found</p>
         </div>
       ) : (
         <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-          {recipes.map((recipe) => (
+          {(recipes as Recipe[]).map((recipe: Recipe) => (
             <RecipeCard
               key={recipe._id}
               id={recipe._id}
