@@ -2,9 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import recipeRoutes from './src/routes/recipes';
 import userRoutes from './src/routes/users';
-import cookieParser from 'cookie-parser';
+import cookbooksRouter from './src/routes/books';
 dotenv.config();
 
 const app = express();
@@ -30,6 +31,7 @@ mongoose
 // Routes
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/books', cookbooksRouter);
 
 // Error handling middleware
 app.use(
