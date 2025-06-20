@@ -10,26 +10,41 @@ import './App.css';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthProvider';
+import { ModalProvider } from './context/ModalContext';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route element={<MainLayout />}>
-              <Route path='/' element={<HomePage />} />
-              <Route path='/register' element={<Register />} />
-              <Route path='/login' element={<Login />} />
-              <Route path='/recipes' element={<BrowsePage />} />
-              <Route path='/recipes/create' element={<CreateRecipe />} />
-              <Route path='/recipes/:id' element={<RecipeDetail />} />
-              <Route path='/recipes/:id/edit' element={<EditRecipe />} />
-            </Route>
-          </Routes>
-        </Router>
+        <ModalProvider>
+          <Router>
+            <Routes>
+              <Route element={<MainLayout />}>
+                <Route path='/' element={<HomePage />} />
+                <Route path='/register' element={<Register />} />
+                <Route path='/login' element={<Login />} />
+                <Route path='/recipes' element={<BrowsePage />} />
+                <Route path='/recipes/create' element={<CreateRecipe />} />
+                <Route path='/recipes/:id' element={<RecipeDetail />} />
+                <Route path='/recipes/:id/edit' element={<EditRecipe />} />
+              </Route>
+            </Routes>
+          </Router>
+        </ModalProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
