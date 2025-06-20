@@ -1,14 +1,14 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
-import Cookbook from '../models/book';
-import { auth, isAuthor as isCookbookAuthor } from '../middleware/auth';
+import Book from '../models/Book';
+import { auth, isAuthor as isBookAuthor } from '../middleware/auth';
 
 const router: Router = express.Router();
 
 // Get all cookbooks
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cookbooks = await Cookbook.find().sort({ createdAt: -1 });
-    res.json(cookbooks);
+    const books = await Book.find().sort({ createdAt: -1 });
+    res.json(books);
   } catch (error) {
     next(error);
   }
@@ -17,12 +17,12 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 // Get a single cookbook by ID
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cookbook = await Cookbook.findById(req.params.id);
-    if (!cookbook) {
-      res.status(404).json({ message: 'Cookbook not found' });
+    const book = await Book.findById(req.params.id);
+    if (!book) {
+      res.status(404).json({ message: 'Book not found' });
       return;
     }
-    res.json(cookbook);
+    res.json(book);
   } catch (error) {
     next(error);
   }
@@ -34,9 +34,9 @@ router.post(
   auth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const cookbook = new Cookbook({ ...req.body, author: req.user._id });
-      await cookbook.save();
-      res.status(201).json(cookbook);
+      const book = new Book({ ...req.body, author: req.user._id });
+      await book.save();
+      res.status(201).json(book);
     } catch (error) {
       next(error);
     }
@@ -47,22 +47,18 @@ router.post(
 router.patch(
   '/:id',
   auth,
-  isCookbookAuthor,
+  isBookAuthor,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const cookbook = await Cookbook.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
-      if (!cookbook) {
-        res.status(404).json({ message: 'Cookbook not found' });
+      const book = await Book.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+      });
+      if (!book) {
+        res.status(404).json({ message: 'Book not found' });
         return;
       }
-      res.json(cookbook);
+      res.json(book);
     } catch (error) {
       next(error);
     }
@@ -73,15 +69,44 @@ router.patch(
 router.delete(
   '/:id',
   auth,
-  isCookbookAuthor,
+  isBookAuthor,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const cookbook = await Cookbook.findByIdAndDelete(req.params.id);
-      if (!cookbook) {
-        res.status(404).json({ message: 'Cookbook not found' });
+      const book = await Book.findByIdAndDelete(req.params.id);
+      if (!book) {
+        res.status(404).json({ message: 'Book not found' });
         return;
       }
-      res.json({ message: 'Cookbook deleted successfully' });
+      res.json({ message: 'Book deleted successfully' });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Add a recipe to a cookbook
+router.patch(
+  '/:id/add-recipe',
+  auth,
+  isBookAuthor,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { recipeId } = req.body;
+      if (!recipeId) {
+        res.status(400).json({ message: 'Recipe ID is required' });
+        return;
+      }
+      const book = await Book.findById(req.params.id);
+      if (!book) {
+        res.status(404).json({ message: 'Book not found' });
+        return;
+      }
+      if (!book.recipes.includes(recipeId)) {
+        book.recipes.push(recipeId);
+        await book.save();
+      }
+      res.json(book);
+      return;
     } catch (error) {
       next(error);
     }

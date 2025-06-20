@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const cookbookSchema = new mongoose.Schema({
+const bookSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -27,6 +27,6 @@ const cookbookSchema = new mongoose.Schema({
   },
 });
 
-const Cookbook = mongoose.model('Cookbook', cookbookSchema);
+const Book = mongoose.model('Book', bookSchema);
 
-export default Cookbook;
+export default Book;
