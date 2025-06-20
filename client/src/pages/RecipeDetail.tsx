@@ -4,15 +4,18 @@ import { useRecipe, useDeleteRecipe } from '../queries/useRecipes';
 import BackButton from '../components/BackButton';
 import { useAuth } from '../hooks/useAuth';
 import { isAuthor as checkIsAuthor } from '../utils/isAuthor';
+import { useModal } from '../context/ModalContext';
+import AddToCookbookModal from '../components/modals/AddToCookbookModal';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: recipe, isLoading, error } = useRecipe(id!);
   const deleteRecipe = useDeleteRecipe();
-  const { user: currentUser } = useAuth();
-  console.log(currentUser, recipe?.author);
-  const isAuthor = checkIsAuthor(currentUser.id || '', recipe?.author || '');
+  const { user: currentUser, isLoading: authLoading } = useAuth();
+  const isAuthor = checkIsAuthor(currentUser?.id || '', recipe?.author || '');
+  const { openModal } = useModal();
+
   const handleDelete = async () => {
     try {
       await deleteRecipe.mutateAsync(id!);
@@ -22,11 +25,18 @@ export default function RecipeDetail() {
     }
   };
 
-  if (isLoading) {
+  const handleAddToCookbook = () => {
+    if (!currentUser) return; // Don't open modal if user is not authenticated
+
+    openModal(<AddToCookbookModal recipeId={id!} />);
+  };
+
+  // Show loading state while auth or recipe data is loading
+  if (authLoading || isLoading) {
     return (
       <div className='text-center py-8'>
         <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-        <p className='mt-2 text-gray-600'>Loading recipe...</p>
+        <p className='mt-2 text-gray-600'>Loading...</p>
       </div>
     );
   }
@@ -97,7 +107,28 @@ export default function RecipeDetail() {
         </div>
       </div>
 
-      <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
+      <div className='bg-white rounded-xl shadow-lg overflow-hidden relative'>
+        {/* Bookmark Icon Button */}
+        <button
+          onClick={handleAddToCookbook}
+          className='absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors'
+          title='Add to Cookbook'
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+            className='w-6 h-6 text-blue-500'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-5-7 5V5z'
+            />
+          </svg>
+        </button>
         <div className='p-8'>
           <h1 className='text-3xl font-bold text-gray-900 mb-4'>
             {recipe.title}
