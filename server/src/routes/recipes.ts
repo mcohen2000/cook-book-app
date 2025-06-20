@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import Recipe from '../../models/Recipe';
+import { auth, isAuthor } from '../middleware/auth';
 
 const router: Router = express.Router();
 
@@ -55,7 +56,7 @@ const createRecipe = async (
   next: NextFunction
 ) => {
   try {
-    const recipe = new Recipe(req.body);
+    const recipe = new Recipe({ ...req.body, author: req.user._id });
     await recipe.save();
     res.status(201).json(recipe);
   } catch (error) {
@@ -108,8 +109,8 @@ const deleteRecipe = async (
 
 router.get('/', getAllRecipes);
 router.get('/:id', getRecipeById);
-router.post('/', createRecipe);
-router.patch('/:id', updateRecipe);
-router.delete('/:id', deleteRecipe);
+router.post('/', auth, createRecipe);
+router.patch('/:id', auth, isAuthor, updateRecipe);
+router.delete('/:id', auth, isAuthor, deleteRecipe);
 
 export default router;
