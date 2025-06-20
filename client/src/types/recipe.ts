@@ -7,4 +7,5 @@ export interface Recipe {
   cookingTime: number;
   servings: number;
   createdAt?: string;
+  author?: string;
 }
