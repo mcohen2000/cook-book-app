@@ -27,12 +27,30 @@ export const useAddRecipeToCookbook = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      cookbookIds,
+      cookbookId,
       recipeId,
     }: {
-      cookbookIds: string[];
+      cookbookId: string;
       recipeId: string;
-    }) => bookService.addRecipeToCookbook(cookbookIds, recipeId),
+    }) => bookService.addRecipeToCookbook(cookbookId, recipeId),
+    onSuccess: () => {
+      // Invalidate and refetch cookbooks immediately
+      queryClient.invalidateQueries({ queryKey: ['cookbooks'] });
+      queryClient.refetchQueries({ queryKey: ['cookbooks'] });
+    },
+  });
+};
+
+export const useRemoveRecipeFromCookbook = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      cookbookId,
+      recipeId,
+    }: {
+      cookbookId: string;
+      recipeId: string;
+    }) => bookService.removeRecipeFromCookbook(cookbookId, recipeId),
     onSuccess: () => {
       // Invalidate and refetch cookbooks immediately
       queryClient.invalidateQueries({ queryKey: ['cookbooks'] });

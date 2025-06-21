@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import {
   useCookbooks,
   useCreateCookbook,
   useAddRecipeToCookbook,
+  useRemoveRecipeFromCookbook,
 } from '../../queries/useBooks';
 
 interface AddToCookbookModalProps {
   recipeId: string;
-  onClose?: () => void;
 }
 
 const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
   recipeId,
-  onClose,
 }) => {
   const { user: currentUser } = useAuth();
   const { data: cookbooks = [] } = useCookbooks();
   const createCookbook = useCreateCookbook();
   const addRecipeToCookbook = useAddRecipeToCookbook();
-  const [selectedCookbooks, setSelectedCookbooks] = useState<string[]>([]);
+  const removeRecipeFromCookbook = useRemoveRecipeFromCookbook();
   const [showNewInput, setShowNewInput] = useState(false);
   const [newCookbookTitle, setNewCookbookTitle] = useState('');
   const [error, setError] = useState('');
@@ -31,30 +30,37 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
     [cookbooks, currentUser?.id]
   );
 
-  // Find cookbooks that already contain this recipe
-  const cookbooksWithRecipe = useMemo(
-    () => userCookbooks.filter((book) => book.recipes.includes(recipeId)),
-    [userCookbooks, recipeId]
-  );
+  const handleToggleCookbook = async (cookbookId: string) => {
+    const cookbook = userCookbooks.find((book) => book._id === cookbookId);
+    if (!cookbook) return;
 
-  // Initialize selected cookbooks with cookbooks that don't already have the recipe
-  useEffect(() => {
-    const availableCookbooks = userCookbooks.filter(
-      (book) => !book.recipes.includes(recipeId)
-    );
-    setSelectedCookbooks(availableCookbooks.map((book) => book._id));
-  }, [userCookbooks, recipeId]);
+    const hasRecipe = cookbook.recipes.includes(recipeId);
 
-  const handleCheckboxChange = (cookbookId: string) => {
-    setSelectedCookbooks((prev) =>
-      prev.includes(cookbookId)
-        ? prev.filter((id) => id !== cookbookId)
-        : [...prev, cookbookId]
-    );
-    setError('');
+    try {
+      if (hasRecipe) {
+        // Remove recipe from cookbook
+        await removeRecipeFromCookbook.mutateAsync({
+          cookbookId,
+          recipeId,
+        });
+      } else {
+        // Add recipe to cookbook
+        await addRecipeToCookbook.mutateAsync({
+          cookbookId,
+          recipeId,
+        });
+      }
+    } catch (err) {
+      setError(
+        `Failed to ${
+          hasRecipe ? 'remove' : 'add'
+        } recipe from cookbook. Please try again.`
+      );
+      setTimeout(() => setError(''), 3000); // Clear error after 3 seconds
+    }
   };
 
-  // Create new cookbook, then select it
+  // Create new cookbook, then add recipe to it
   const handleCreateNew = async () => {
     if (!newCookbookTitle.trim()) {
       setError('Please enter a title for the new cookbook.');
@@ -63,16 +69,12 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
     setError('');
     setCreating(true);
     try {
-      // Create new cookbook
-      const result = await createCookbook.mutateAsync({
-        title: newCookbookTitle,
-        recipeId,
-      });
-      if (result?._id) {
-        setSelectedCookbooks((prev) => [...prev, result._id]);
-        setShowNewInput(false);
-        setNewCookbookTitle('');
-      }
+      // Create new cookbook with recipe
+      await createCookbook.mutateAsync({ title: newCookbookTitle, recipeId });
+      setShowNewInput(false);
+      setNewCookbookTitle('');
+    } catch (err) {
+      setError('Failed to create cookbook. Please try again.');
     } finally {
       setCreating(false);
     }
@@ -84,33 +86,16 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
     setError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedCookbooks.length === 0) {
-      setError('Please select at least one cookbook.');
-      return;
-    }
-    setError('');
-
-    try {
-      // Add to cookbooks using the unified function
-      await addRecipeToCookbook.mutateAsync({
-        recipeId,
-        cookbookIds: selectedCookbooks,
-      });
-      if (onClose) onClose();
-    } catch (err) {
-      setError('Failed to add recipe to cookbooks. Please try again.');
-    }
-  };
-
   const isLoading =
-    createCookbook.isPending || addRecipeToCookbook.isPending || creating;
+    createCookbook.isPending ||
+    addRecipeToCookbook.isPending ||
+    removeRecipeFromCookbook.isPending ||
+    creating;
 
   return (
-    <form onSubmit={handleSubmit} style={{ minWidth: 300 }}>
+    <div style={{ minWidth: 300 }}>
       <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16 }}>
-        Add to Cookbook
+        Manage Cookbooks
       </h2>
 
       {/* User's Cookbooks */}
@@ -125,8 +110,7 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
         ) : (
           <div style={{ maxHeight: 200, overflowY: 'auto' }}>
             {userCookbooks.map((cookbook) => {
-              const alreadyHasRecipe = cookbook.recipes.includes(recipeId);
-              const isSelected = selectedCookbooks.includes(cookbook._id);
+              const hasRecipe = cookbook.recipes.includes(recipeId);
 
               return (
                 <label
@@ -135,30 +119,19 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     marginBottom: 8,
-                    cursor: alreadyHasRecipe ? 'default' : 'pointer',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
                   }}
                 >
                   <input
                     type='checkbox'
-                    checked={alreadyHasRecipe || isSelected}
+                    checked={hasRecipe}
                     onChange={() =>
-                      !alreadyHasRecipe && handleCheckboxChange(cookbook._id)
+                      !isLoading && handleToggleCookbook(cookbook._id)
                     }
-                    disabled={isLoading || alreadyHasRecipe}
+                    disabled={isLoading}
                     style={{ marginRight: 8 }}
                   />
-                  <span
-                    style={{
-                      fontSize: 14,
-                      color: alreadyHasRecipe ? '#6b7280' : 'inherit',
-                      fontStyle: alreadyHasRecipe ? 'italic' : 'normal',
-                    }}
-                  >
-                    {cookbook.title}
-                    {alreadyHasRecipe && (
-                      <span style={{ color: '#22c55e', marginLeft: 4 }}>✓</span>
-                    )}
-                  </span>
+                  <span style={{ fontSize: 14 }}>{cookbook.title}</span>
                 </label>
               );
             })}
@@ -260,27 +233,7 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
       </div>
 
       {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
-      <button
-        type='submit'
-        style={{
-          width: '100%',
-          padding: 10,
-          background: '#3b82f6',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 4,
-          fontWeight: 600,
-          cursor: isLoading ? 'not-allowed' : 'pointer',
-        }}
-        disabled={isLoading}
-      >
-        {isLoading
-          ? 'Adding...'
-          : `Add to ${selectedCookbooks.length} cookbook${
-              selectedCookbooks.length !== 1 ? 's' : ''
-            }`}
-      </button>
-    </form>
+    </div>
   );
 };
 
