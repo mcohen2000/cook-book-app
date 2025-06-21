@@ -86,27 +86,119 @@ router.delete(
 
 // Add a recipe to a cookbook
 router.patch(
-  '/:id/add-recipe',
+  '/:cookbookId/add-recipe',
   auth,
-  isBookAuthor,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { recipeId } = req.body;
+      const { cookbookId } = req.params;
+
       if (!recipeId) {
-        res.status(400).json({ message: 'Recipe ID is required' });
+        res.status(400).json({ message: 'recipeId is required' });
         return;
       }
-      const book = await Book.findById(req.params.id);
+
+      // Find the book and verify ownership
+      const book = await Book.findOne({
+        _id: cookbookId,
+        author: req.user._id,
+      });
+
       if (!book) {
-        res.status(404).json({ message: 'Book not found' });
+        res.status(404).json({
+          message: 'Cookbook not found or you do not have permission',
+        });
         return;
       }
+
+      // Add the recipe if it doesn't already exist in the cookbook
       if (!book.recipes.includes(recipeId)) {
         book.recipes.push(recipeId);
         await book.save();
       }
+
       res.json(book);
-      return;
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Remove a recipe from a cookbook
+router.patch(
+  '/:cookbookId/remove-recipe',
+  auth,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { recipeId } = req.body;
+      const { cookbookId } = req.params;
+
+      if (!recipeId) {
+        res.status(400).json({ message: 'recipeId is required' });
+        return;
+      }
+
+      // Find the book and verify ownership
+      const book = await Book.findOne({
+        _id: cookbookId,
+        author: req.user._id,
+      });
+
+      if (!book) {
+        res.status(404).json({
+          message: 'Cookbook not found or you do not have permission',
+        });
+        return;
+      }
+
+      // Remove the recipe if it exists in the cookbook
+      const recipeIndex = book.recipes.indexOf(recipeId);
+      if (recipeIndex > -1) {
+        book.recipes.splice(recipeIndex, 1);
+        await book.save();
+      }
+
+      res.json(book);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Add a recipe to multiple cookbooks
+router.post(
+  '/add-recipe',
+  auth,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { recipeId, cookbookIds } = req.body;
+      if (
+        !recipeId ||
+        !Array.isArray(cookbookIds) ||
+        cookbookIds.length === 0
+      ) {
+        res
+          .status(400)
+          .json({ message: 'recipeId and cookbookIds[] are required' });
+        return;
+      }
+
+      // Find all books that match the IDs and are owned by the user.
+      // This automatically filters out any books they don't own, without causing an error.
+      const booksToUpdate = await Book.find({
+        _id: { $in: cookbookIds },
+        author: req.user._id,
+      });
+
+      const updatedBooks = [];
+      for (const book of booksToUpdate) {
+        if (!book.recipes.includes(recipeId)) {
+          book.recipes.push(recipeId);
+          await book.save();
+        }
+        updatedBooks.push(book);
+      }
+      res.json(updatedBooks);
     } catch (error) {
       next(error);
     }

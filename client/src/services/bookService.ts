@@ -25,16 +25,33 @@ export const bookService = {
   },
 
   addRecipeToCookbook: async (
-    cookbookIds: string[],
+    cookbookId: string,
     recipeId: string
-  ): Promise<Book[]> => {
-    const response = await fetch(`${API_URL}/books/add-recipe`, {
-      method: 'POST',
+  ): Promise<Book> => {
+    const response = await fetch(`${API_URL}/books/${cookbookId}/add-recipe`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipeId, cookbookIds }),
+      body: JSON.stringify({ recipeId }),
       credentials: 'include',
     });
-    if (!response.ok) throw new Error('Failed to add recipe to cookbook(s)');
+    if (!response.ok) throw new Error('Failed to add recipe to cookbook');
+    return response.json();
+  },
+
+  removeRecipeFromCookbook: async (
+    cookbookId: string,
+    recipeId: string
+  ): Promise<Book> => {
+    const response = await fetch(
+      `${API_URL}/books/${cookbookId}/remove-recipe`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipeId }),
+        credentials: 'include',
+      }
+    );
+    if (!response.ok) throw new Error('Failed to remove recipe from cookbook');
     return response.json();
   },
 };
