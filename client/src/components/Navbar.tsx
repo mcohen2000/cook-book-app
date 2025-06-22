@@ -29,7 +29,13 @@ const Navbar = () => {
               to='/recipes'
               className='text-gray-600 hover:text-gray-900 px-4 py-2'
             >
-              Browse Recipes
+              Recipes
+            </Link>
+            <Link
+              to='/cookbooks'
+              className='text-gray-600 hover:text-gray-900 px-4 py-2'
+            >
+              Cookbooks
             </Link>
             <Link
               to='/recipes/create'

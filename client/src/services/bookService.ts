@@ -11,6 +11,14 @@ export const bookService = {
     return response.json();
   },
 
+  getUserCookbooks: async (): Promise<Book[]> => {
+    const response = await fetch(`${API_URL}/books/my-cookbooks`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch user cookbooks');
+    return response.json();
+  },
+
   createCookbook: async (title: string, recipeId?: string): Promise<Book> => {
     const body: any = { title };
     if (recipeId) body.recipes = [recipeId];

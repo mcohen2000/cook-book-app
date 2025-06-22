@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import {
-  useCookbooks,
+  useUserCookbooks,
   useCreateCookbook,
   useAddRecipeToCookbook,
   useRemoveRecipeFromCookbook,
@@ -15,7 +15,7 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
   recipeId,
 }) => {
   const { user: currentUser } = useAuth();
-  const { data: cookbooks = [] } = useCookbooks();
+  const { data: cookbooks = [] } = useUserCookbooks();
   const createCookbook = useCreateCookbook();
   const addRecipeToCookbook = useAddRecipeToCookbook();
   const removeRecipeFromCookbook = useRemoveRecipeFromCookbook();
@@ -24,11 +24,8 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
   const [error, setError] = useState('');
   const [creating, setCreating] = useState(false);
 
-  // Memoize filtered cookbooks to prevent infinite re-renders
-  const userCookbooks = useMemo(
-    () => cookbooks.filter((book) => book.author === currentUser?.id),
-    [cookbooks, currentUser?.id]
-  );
+  // Since we're now using useUserCookbooks, we don't need to filter by author
+  const userCookbooks = cookbooks;
 
   const handleToggleCookbook = async (cookbookId: string) => {
     const cookbook = userCookbooks.find((book) => book._id === cookbookId);
