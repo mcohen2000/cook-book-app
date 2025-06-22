@@ -6,6 +6,12 @@ interface CookbookCardProps {
 }
 
 const CookbookCard = ({ cookbook }: CookbookCardProps) => {
+  // Get author name (could be string or User object)
+  const authorName =
+    typeof cookbook.author === 'string'
+      ? cookbook.author
+      : cookbook.author.name;
+
   return (
     <Link to={`/cookbooks/${cookbook._id}`} className='block'>
       <div className='bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200'>
@@ -44,7 +50,7 @@ const CookbookCard = ({ cookbook }: CookbookCardProps) => {
                   d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
                 />
               </svg>
-              {cookbook.author}
+              {authorName}
             </div>
           </div>
           {cookbook.createdAt && (

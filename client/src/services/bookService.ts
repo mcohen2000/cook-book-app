@@ -1,4 +1,4 @@
-import type { Book } from '../types/book';
+import type { Book, BookModalItem } from '../types/book';
 
 const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api`;
 
@@ -11,11 +11,19 @@ export const bookService = {
     return response.json();
   },
 
-  getUserCookbooks: async (): Promise<Book[]> => {
+  getUserCookbooks: async (): Promise<BookModalItem[]> => {
     const response = await fetch(`${API_URL}/books/my-cookbooks`, {
       credentials: 'include',
     });
     if (!response.ok) throw new Error('Failed to fetch user cookbooks');
+    return response.json();
+  },
+
+  getCookbook: async (id: string): Promise<Book> => {
+    const response = await fetch(`${API_URL}/books/${id}`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch cookbook');
     return response.json();
   },
 

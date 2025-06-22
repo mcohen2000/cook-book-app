@@ -4,6 +4,7 @@ import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
 import BrowsePage from './pages/BrowsePage';
 import BrowseCookbooks from './pages/BrowseCookbooks';
+import CookbookDetail from './pages/CookbookDetail';
 import CreateRecipe from './pages/CreateRecipe';
 import RecipeDetail from './pages/RecipeDetail';
 import EditRecipe from './pages/EditRecipe';
@@ -40,6 +41,7 @@ function App() {
                 <Route path='/login' element={<Login />} />
                 <Route path='/recipes' element={<BrowsePage />} />
                 <Route path='/cookbooks' element={<BrowseCookbooks />} />
+                <Route path='/cookbooks/:id' element={<CookbookDetail />} />
                 <Route path='/recipes/create' element={<CreateRecipe />} />
                 <Route path='/recipes/:id' element={<RecipeDetail />} />
                 <Route path='/recipes/:id/edit' element={<EditRecipe />} />

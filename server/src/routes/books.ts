@@ -7,7 +7,10 @@ const router: Router = express.Router();
 // Get all cookbooks
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const books = await Book.find().sort({ createdAt: -1 });
+    const books = await Book.find()
+      .populate('recipes', 'title description cookingTime servings')
+      .populate('author', 'name')
+      .sort({ createdAt: -1 });
     res.json(books);
   } catch (error) {
     next(error);
@@ -33,7 +36,9 @@ router.get(
 // Get a single cookbook by ID
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const book = await Book.findById(req.params.id);
+    const book = await Book.findById(req.params.id)
+      .populate('recipes', 'title description cookingTime servings')
+      .populate('author', 'name');
     if (!book) {
       res.status(404).json({ message: 'Book not found' });
       return;

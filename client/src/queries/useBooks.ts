@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bookService } from '../services/bookService';
-import type { Book } from '../types/book';
+import type { Book, BookModalItem } from '../types/book';
 
 export const useCookbooks = () => {
   return useQuery<Book[]>({
@@ -10,9 +10,17 @@ export const useCookbooks = () => {
 };
 
 export const useUserCookbooks = () => {
-  return useQuery<Book[]>({
+  return useQuery<BookModalItem[]>({
     queryKey: ['user-cookbooks'],
     queryFn: bookService.getUserCookbooks,
+  });
+};
+
+export const useCookbook = (id: string) => {
+  return useQuery<Book>({
+    queryKey: ['cookbook', id],
+    queryFn: () => bookService.getCookbook(id),
+    enabled: !!id,
   });
 };
 
