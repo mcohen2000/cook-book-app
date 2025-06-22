@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useState } from 'react';
 import {
   useUserCookbooks,
   useCreateCookbook,
@@ -14,7 +13,6 @@ interface AddToCookbookModalProps {
 const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
   recipeId,
 }) => {
-  const { user: currentUser } = useAuth();
   const { data: cookbooks = [] } = useUserCookbooks();
   const createCookbook = useCreateCookbook();
   const addRecipeToCookbook = useAddRecipeToCookbook();
