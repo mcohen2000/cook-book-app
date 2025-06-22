@@ -14,6 +14,22 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+// Get current user's cookbooks
+router.get(
+  '/my-cookbooks',
+  auth,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const books = await Book.find({ author: req.user._id }).sort({
+        createdAt: -1,
+      });
+      res.json(books);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Get a single cookbook by ID
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
