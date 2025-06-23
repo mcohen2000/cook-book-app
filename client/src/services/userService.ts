@@ -57,3 +57,15 @@ export async function logout() {
   }
   return true;
 }
+
+export async function updateProfile({ name }: { name: string }) {
+  const response = await fetch(`${API_URL}/profile`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error updating profile');
+  return data;
+}
