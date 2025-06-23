@@ -6,6 +6,7 @@ import BrowsePage from './pages/BrowsePage';
 import BrowseCookbooks from './pages/BrowseCookbooks';
 import CookbookDetail from './pages/CookbookDetail';
 import CreateRecipe from './pages/CreateRecipe';
+import CreateCookbook from './pages/CreateCookbook';
 import RecipeDetail from './pages/RecipeDetail';
 import EditRecipe from './pages/EditRecipe';
 import Profile from './pages/Profile';
@@ -43,6 +44,7 @@ function App() {
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/recipes' element={<BrowsePage />} />
                 <Route path='/cookbooks' element={<BrowseCookbooks />} />
+                <Route path='/cookbooks/create' element={<CreateCookbook />} />
                 <Route path='/cookbooks/:id' element={<CookbookDetail />} />
                 <Route path='/recipes/create' element={<CreateRecipe />} />
                 <Route path='/recipes/:id' element={<RecipeDetail />} />
