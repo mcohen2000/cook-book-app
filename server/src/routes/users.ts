@@ -119,6 +119,30 @@ router.get('/auth', auth, async (req, res) => {
   });
 });
 
+// Update user profile
+router.patch('/profile', auth, async (req: Request, res: Response) => {
+  try {
+    const { name } = req.body;
+
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      res.status(400).json({ error: 'Name is required and cannot be empty' });
+      return;
+    }
+
+    // Update user's name
+    req.user.name = name.trim();
+    await req.user.save();
+
+    res.json({
+      id: req.user._id,
+      email: req.user.email,
+      name: req.user.name,
+    });
+  } catch (error) {
+    res.status(400).json({ error: 'Error updating profile' });
+  }
+});
+
 // Logout user
 router.post('/logout', (req: Request, res: Response) => {
   if (!process.env.COOKIE_NAME || !process.env.COOKIE_URL) return;
