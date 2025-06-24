@@ -69,3 +69,43 @@ export async function updateProfile({ name }: { name: string }) {
   if (!response.ok) throw new Error(data.error || 'Error updating profile');
   return data;
 }
+
+export async function likeRecipe(recipeId: string) {
+  const response = await fetch(`${API_URL}/like/recipe/${recipeId}`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error liking recipe');
+  return data.likedRecipes;
+}
+
+export async function unlikeRecipe(recipeId: string) {
+  const response = await fetch(`${API_URL}/unlike/recipe/${recipeId}`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error unliking recipe');
+  return data.likedRecipes;
+}
+
+export async function likeCookbook(cookbookId: string) {
+  const response = await fetch(`${API_URL}/like/cookbook/${cookbookId}`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error liking cookbook');
+  return data.likedCookbooks;
+}
+
+export async function unlikeCookbook(cookbookId: string) {
+  const response = await fetch(`${API_URL}/unlike/cookbook/${cookbookId}`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Error unliking cookbook');
+  return data.likedCookbooks;
+}

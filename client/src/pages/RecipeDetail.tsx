@@ -6,6 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 import { isAuthor as checkIsAuthor } from '../utils/isAuthor';
 import { useModal } from '../context/ModalContext';
 import AddToCookbookModal from '../components/modals/AddToCookbookModal';
+import { useLikeRecipe, useUnlikeRecipe } from '../queries/useUsers';
+import HeartIcon from '../components/icons/HeartIcon';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -15,21 +17,8 @@ export default function RecipeDetail() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
   const isAuthor = checkIsAuthor(currentUser?.id || '', recipe?.author || '');
   const { openModal } = useModal();
-
-  const handleDelete = async () => {
-    try {
-      await deleteRecipe.mutateAsync(id!);
-      navigate('/recipes');
-    } catch (err) {
-      console.error('Failed to delete recipe:', err);
-    }
-  };
-
-  const handleAddToCookbook = () => {
-    if (!currentUser) return; // Don't open modal if user is not authenticated
-
-    openModal(<AddToCookbookModal recipeId={id!} />);
-  };
+  const likeRecipe = useLikeRecipe();
+  const unlikeRecipe = useUnlikeRecipe();
 
   // Show loading state while auth or recipe data is loading
   if (authLoading || isLoading) {
@@ -56,6 +45,33 @@ export default function RecipeDetail() {
       </div>
     );
   }
+
+  // At this point, recipe is guaranteed to be defined
+  const isLiked = currentUser?.likedRecipes?.includes(recipe._id);
+
+  const handleDelete = async () => {
+    try {
+      await deleteRecipe.mutateAsync(id!);
+      navigate('/recipes');
+    } catch (err) {
+      console.error('Failed to delete recipe:', err);
+    }
+  };
+
+  const handleAddToCookbook = () => {
+    if (!currentUser) return; // Don't open modal if user is not authenticated
+
+    openModal(<AddToCookbookModal recipeId={id!} />);
+  };
+
+  const handleToggleLike = () => {
+    if (!currentUser) return;
+    if (isLiked) {
+      unlikeRecipe.mutate(recipe._id);
+    } else {
+      likeRecipe.mutate(recipe._id);
+    }
+  };
 
   return (
     <>
@@ -108,6 +124,19 @@ export default function RecipeDetail() {
       </div>
 
       <div className='bg-white rounded-xl shadow-lg overflow-hidden relative'>
+        {/* Heart Icon Button */}
+        <button
+          onClick={handleToggleLike}
+          className={`absolute top-4 right-16 flex items-center justify-center p-2 rounded-full transition-colors ${
+            isLiked
+              ? 'bg-red-100 hover:bg-red-200'
+              : 'bg-gray-100 hover:bg-red-100'
+          }`}
+          title={isLiked ? 'Unlike Recipe' : 'Like Recipe'}
+          style={{ width: 40, height: 40 }}
+        >
+          <HeartIcon filled={isLiked} size={24} />
+        </button>
         {/* Bookmark Icon Button */}
         <button
           onClick={handleAddToCookbook}

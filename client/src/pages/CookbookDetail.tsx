@@ -2,6 +2,9 @@ import { useParams } from 'react-router';
 import { useCookbook } from '../queries/useBooks';
 import RecipeCard from '../components/RecipeCard';
 import type { Recipe } from '../types/book';
+import { useAuth } from '../hooks/useAuth';
+import { useLikeCookbook, useUnlikeCookbook } from '../queries/useUsers';
+import HeartIcon from '../components/icons/HeartIcon';
 
 const CookbookDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +13,9 @@ const CookbookDetail = () => {
     isLoading: cookbookLoading,
     error: cookbookError,
   } = useCookbook(id!);
+  const { user: currentUser } = useAuth();
+  const likeCookbook = useLikeCookbook();
+  const unlikeCookbook = useUnlikeCookbook();
 
   if (cookbookLoading) {
     return (
@@ -36,6 +42,18 @@ const CookbookDetail = () => {
     );
   }
 
+  // At this point, cookbook is guaranteed to be defined
+  const isLiked = currentUser?.likedCookbooks?.includes(cookbook._id);
+
+  const handleToggleLike = () => {
+    if (!currentUser) return;
+    if (isLiked) {
+      unlikeCookbook.mutate(cookbook._id);
+    } else {
+      likeCookbook.mutate(cookbook._id);
+    }
+  };
+
   // Get author name (could be string or User object)
   const authorName =
     typeof cookbook.author === 'string'
@@ -58,7 +76,19 @@ const CookbookDetail = () => {
               </p>
             )}
           </div>
-          <div className='text-right'>
+          <div className='text-right flex flex-col items-end'>
+            <button
+              onClick={handleToggleLike}
+              className={`mb-2 p-2 rounded-full transition-colors ${
+                isLiked
+                  ? 'bg-red-100 hover:bg-red-200'
+                  : 'bg-gray-100 hover:bg-red-100'
+              }`}
+              title={isLiked ? 'Unlike Cookbook' : 'Like Cookbook'}
+              style={{ width: 40, height: 40 }}
+            >
+              <HeartIcon filled={isLiked} size={24} />
+            </button>
             <div className='text-2xl font-bold text-blue-500'>
               {cookbook.recipes.length}
             </div>
