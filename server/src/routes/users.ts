@@ -116,6 +116,8 @@ router.get('/auth', auth, async (req, res) => {
     id: req.user._id,
     email: req.user.email,
     name: req.user.name,
+    likedRecipes: req.user.likedRecipes,
+    likedCookbooks: req.user.likedCookbooks,
   });
 });
 
@@ -130,13 +132,21 @@ router.patch('/profile', auth, async (req: Request, res: Response) => {
     }
 
     // Update user's name
-    req.user.name = name.trim();
-    await req.user.save();
-
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { name: name.trim() },
+      { new: true }
+    );
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
     res.json({
-      id: req.user._id,
-      email: req.user.email,
-      name: req.user.name,
+      id: updatedUser._id,
+      email: updatedUser.email,
+      name: updatedUser.name,
+      likedRecipes: updatedUser.likedRecipes,
+      likedCookbooks: updatedUser.likedCookbooks,
     });
   } catch (error) {
     res.status(400).json({ error: 'Error updating profile' });
@@ -154,5 +164,85 @@ router.post('/logout', (req: Request, res: Response) => {
   });
   res.json({ message: 'Logged out successfully' });
 });
+
+// Like a recipe
+router.post('/like/recipe/:id', auth, async (req: Request, res: Response) => {
+  try {
+    const recipeId = req.params.id;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { likedRecipes: recipeId } },
+      { new: true }
+    );
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    res.json({ likedRecipes: updatedUser.likedRecipes });
+  } catch (error) {
+    res.status(400).json({ error: 'Error liking recipe' });
+  }
+});
+
+// Unlike a recipe
+router.post('/unlike/recipe/:id', auth, async (req: Request, res: Response) => {
+  try {
+    const recipeId = req.params.id;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { likedRecipes: recipeId } },
+      { new: true }
+    );
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    res.json({ likedRecipes: updatedUser.likedRecipes });
+  } catch (error) {
+    res.status(400).json({ error: 'Error unliking recipe' });
+  }
+});
+
+// Like a cookbook
+router.post('/like/cookbook/:id', auth, async (req: Request, res: Response) => {
+  try {
+    const bookId = req.params.id;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { likedCookbooks: bookId } },
+      { new: true }
+    );
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    res.json({ likedCookbooks: updatedUser.likedCookbooks });
+  } catch (error) {
+    res.status(400).json({ error: 'Error liking cookbook' });
+  }
+});
+
+// Unlike a cookbook
+router.post(
+  '/unlike/cookbook/:id',
+  auth,
+  async (req: Request, res: Response) => {
+    try {
+      const bookId = req.params.id;
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { likedCookbooks: bookId } },
+        { new: true }
+      );
+      if (!updatedUser) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+      res.json({ likedCookbooks: updatedUser.likedCookbooks });
+    } catch (error) {
+      res.status(400).json({ error: 'Error unliking cookbook' });
+    }
+  }
+);
 
 export default router;
