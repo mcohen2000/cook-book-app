@@ -8,6 +8,7 @@ import { useModal } from '../context/ModalContext';
 import AddToCookbookModal from '../components/modals/AddToCookbookModal';
 import { useLikeRecipe, useUnlikeRecipe } from '../queries/useUsers';
 import HeartIcon from '../components/icons/HeartIcon';
+import BookmarkIcon from '../components/icons/BookmarkIcon';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -143,20 +144,7 @@ export default function RecipeDetail() {
           className='absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors'
           title='Add to Cookbook'
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-            className='w-6 h-6 text-blue-500'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-5-7 5V5z'
-            />
-          </svg>
+          <BookmarkIcon size={24} />
         </button>
         <div className='p-8'>
           <h1 className='text-3xl font-bold text-gray-900 mb-4'>
