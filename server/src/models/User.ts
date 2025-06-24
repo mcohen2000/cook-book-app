@@ -5,6 +5,8 @@ export interface User extends mongoose.Document {
   email: string;
   password: string;
   name: string;
+  likedRecipes?: mongoose.Types.ObjectId[];
+  likedCookbooks?: mongoose.Types.ObjectId[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -27,6 +29,18 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    likedRecipes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recipe',
+      },
+    ],
+    likedCookbooks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book',
+      },
+    ],
   },
   {
     timestamps: true,
