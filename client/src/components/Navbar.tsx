@@ -73,9 +73,14 @@ const Navbar = () => {
                 <DropdownMenu
                   align='right'
                   trigger={
-                    <span className='flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-full p-1'>
-                      <UserAvatarIcon name={user.name} />
-                      <DownwardArrowIcon />
+                    <span className='flex items-center'>
+                      <span
+                        className='flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'
+                        aria-label='User menu'
+                      >
+                        <UserAvatarIcon name={user.name} />
+                      </span>
+                      <DownwardArrowIcon className='ml-2 w-4 h-4 text-gray-700' />
                     </span>
                   }
                   links={({ setOpen }) => [
