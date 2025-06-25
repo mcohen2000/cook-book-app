@@ -11,6 +11,7 @@ interface RecipeFormProps {
   subtitle: string;
   backTo: string;
   backText: string;
+  aiExtractedRecipe?: Omit<Recipe, '_id'>;
 }
 
 export default function RecipeForm({
@@ -39,6 +40,7 @@ export default function RecipeForm({
 
   const [showOcr, setShowOcr] = useState(false);
   const [ocrText, setOcrText] = useState('');
+  const [aiResult, setAiResult] = useState<Omit<Recipe, '_id'> | null>(null);
 
   useEffect(() => {
     if (initialRecipe) {
@@ -49,6 +51,23 @@ export default function RecipeForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
+  };
+
+  const handleAiExtracted = (jsonText: string) => {
+    try {
+      const parsed = JSON.parse(jsonText);
+      setAiResult(parsed);
+    } catch (error) {
+      console.error('Failed to parse AI result:', error);
+      setOcrText(jsonText); // Fallback to showing raw text
+    }
+  };
+
+  const useAiResult = () => {
+    if (aiResult) {
+      setFormData(aiResult);
+      setAiResult(null); // Clear the AI result after using it
+    }
   };
 
   const updateIngredient = (
@@ -99,11 +118,44 @@ export default function RecipeForm({
           </button>
         )}
       </div>
-      {showOcr && <OcrExtractor onExtracted={setOcrText} />}
-      {ocrText && (
-        <div className='my-4 p-4 bg-gray-100 border rounded text-sm whitespace-pre-wrap'>
-          <strong>Extracted Text:</strong>
-          <div>{ocrText}</div>
+      {showOcr && <OcrExtractor onExtracted={handleAiExtracted} />}
+      {aiResult && (
+        <div className='mb-6 p-4 bg-green-50 border border-green-300 rounded-lg'>
+          <div className='flex justify-between items-start mb-3'>
+            <h3 className='text-lg font-semibold text-green-800'>
+              AI Extracted Recipe
+            </h3>
+            <button
+              type='button'
+              onClick={useAiResult}
+              className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700'
+            >
+              Use AI Result
+            </button>
+          </div>
+          <div className='space-y-2 text-sm'>
+            <div>
+              <strong>Title:</strong> {aiResult.title || 'Not found'}
+            </div>
+            <div>
+              <strong>Description:</strong>{' '}
+              {aiResult.description || 'Not found'}
+            </div>
+            <div>
+              <strong>Ingredients:</strong> {aiResult.ingredients?.length || 0}{' '}
+              found
+            </div>
+            <div>
+              <strong>Instructions:</strong>{' '}
+              {aiResult.instructions?.length || 0} steps
+            </div>
+            <div>
+              <strong>Cooking Time:</strong> {aiResult.cookingTime || 0} minutes
+            </div>
+            <div>
+              <strong>Servings:</strong> {aiResult.servings || 0}
+            </div>
+          </div>
         </div>
       )}
       <form
