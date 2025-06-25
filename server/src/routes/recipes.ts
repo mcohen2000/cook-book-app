@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import Recipe from '../models/Recipe';
 import { auth, isAuthor } from '../middleware/auth';
+import axios from 'axios';
 
 const router: Router = express.Router();
 
@@ -106,6 +107,38 @@ const deleteRecipe = async (
     next(error);
   }
 };
+
+// POST /api/recipes/ocr
+router.post('/ocr', async (req, res) => {
+  const { text } = req.body;
+  if (!text) {
+    res.status(400).json({ error: 'Missing text in request body' });
+    return;
+  }
+
+  const llmUrl = process.env.LLM_URL;
+  if (!llmUrl) {
+    res.status(500).json({ error: 'LLM_URL environment variable not set' });
+    return;
+  }
+
+  const prompt = `You are a helpful assistant. The following is a raw OCR scan of a recipe. Please extract and organize the information into a structured recipe format with the following fields: Title, Description, Ingredients (as a list with amounts), Instructions (as a list of steps), Cooking Time (in minutes), and Servings. If any information is missing, leave the field blank.\n\nRaw OCR Text:\n${text}`;
+
+  try {
+    const response = await axios.post(`${llmUrl}`, {
+      model: 'llama3.2',
+      prompt,
+      stream: false,
+    });
+    const result = response.data.response || response.data;
+    res.json({ result });
+    return;
+  } catch (error) {
+    console.error('Ollama error:', error);
+    res.status(500).json({ error: 'Failed to process with Ollama' });
+    return;
+  }
+});
 
 router.get('/', getAllRecipes);
 router.get('/:id', getRecipeById);

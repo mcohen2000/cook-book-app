@@ -51,3 +51,9 @@ export const useDeleteRecipe = () => {
     },
   });
 };
+
+export const useOcrRecipe = () => {
+  return useMutation({
+    mutationFn: recipeService.ocrRecipe,
+  });
+};
