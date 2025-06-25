@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Recipe } from '../types/recipe';
 import BackButton from './BackButton';
+import OcrExtractor from './OcrExtractor';
 
 interface RecipeFormProps {
   onSubmit: (recipe: Omit<Recipe, '_id'>) => void;
@@ -35,6 +36,9 @@ export default function RecipeForm({
       servings: 1,
     };
   });
+
+  const [showOcr, setShowOcr] = useState(false);
+  const [ocrText, setOcrText] = useState('');
 
   useEffect(() => {
     if (initialRecipe) {
@@ -85,7 +89,23 @@ export default function RecipeForm({
     <>
       <div className='flex justify-between items-center mb-6'>
         <BackButton to={backTo} text={backText} />
+        {!isEditing && (
+          <button
+            type='button'
+            className='ml-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 border border-blue-300'
+            onClick={() => setShowOcr((v) => !v)}
+          >
+            Extract from Image/PDF
+          </button>
+        )}
       </div>
+      {showOcr && <OcrExtractor onExtracted={setOcrText} />}
+      {ocrText && (
+        <div className='my-4 p-4 bg-gray-100 border rounded text-sm whitespace-pre-wrap'>
+          <strong>Extracted Text:</strong>
+          <div>{ocrText}</div>
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
         className='bg-white rounded-xl shadow-lg p-8'
