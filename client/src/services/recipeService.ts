@@ -68,4 +68,19 @@ export const recipeService = {
       throw new Error('Failed to delete recipe');
     }
   },
+
+  ocrRecipe: async (text: string): Promise<string> => {
+    const response = await fetch(`${API_URL}/recipes/ocr`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to organize recipe with AI');
+    }
+    const data = await response.json();
+    return data.result;
+  },
 };
