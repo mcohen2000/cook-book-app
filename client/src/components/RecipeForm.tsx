@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Recipe } from '../types/recipe';
 import BackButton from './BackButton';
 import OcrExtractor from './OcrExtractor';
+import TrashIcon from './icons/TrashIcon';
 
 interface RecipeFormProps {
   onSubmit: (recipe: Omit<Recipe, '_id'>) => void;
@@ -220,7 +221,7 @@ export default function RecipeForm({
             </div>
             <div className='space-y-3'>
               {formData.ingredients.map((ingredient, index) => (
-                <div key={index} className='flex gap-4'>
+                <div key={index} className='flex gap-4 items-center'>
                   <div className='flex-1'>
                     <input
                       type='text'
@@ -249,9 +250,10 @@ export default function RecipeForm({
                     <button
                       type='button'
                       onClick={() => removeIngredient(index)}
-                      className='text-red-500 hover:text-red-600'
+                      className='cursor-pointer bg-red-500 hover:bg-red-600 text-white flex items-center justify-center w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400'
+                      aria-label='Remove ingredient'
                     >
-                      Remove
+                      <TrashIcon color='white' />
                     </button>
                   )}
                 </div>
@@ -275,7 +277,7 @@ export default function RecipeForm({
             </div>
             <div className='space-y-4'>
               {formData.instructions.map((instruction, index) => (
-                <div key={index} className='flex gap-4'>
+                <div key={index} className='flex gap-4 items-center'>
                   <div className='flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-medium'>
                     {index + 1}
                   </div>
@@ -300,9 +302,10 @@ export default function RecipeForm({
                     <button
                       type='button'
                       onClick={() => removeInstruction(index)}
-                      className='text-red-500 hover:text-red-600'
+                      className='bg-red-500 hover:bg-red-600 text-white flex items-center justify-center w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400'
+                      aria-label='Remove instruction'
                     >
-                      Remove
+                      <TrashIcon color='white' />
                     </button>
                   )}
                 </div>
