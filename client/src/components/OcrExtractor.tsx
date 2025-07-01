@@ -8,7 +8,6 @@ interface OcrExtractorProps {
 
 export default function OcrExtractor({ onExtracted }: OcrExtractorProps) {
   const [ocrLoading, setOcrLoading] = useState(false);
-  const [ocrResult, setOcrResult] = useState('');
   const [aiResult, setAiResult] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -20,17 +19,13 @@ export default function OcrExtractor({ onExtracted }: OcrExtractorProps) {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
-    setOcrResult('');
     setAiResult('');
     const file = e.target.files?.[0];
     if (!file) return;
     setOcrLoading(true);
     try {
       const fileUrl = URL.createObjectURL(file);
-      const { data } = await Tesseract.recognize(fileUrl, 'eng', {
-        logger: (m) => {},
-      });
-      setOcrResult(data.text);
+      const { data } = await Tesseract.recognize(fileUrl, 'eng', {});
       setOcrLoading(false);
       organizeRecipe(data.text, {
         onSuccess: (organized) => {
