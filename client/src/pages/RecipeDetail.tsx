@@ -166,11 +166,13 @@ export default function RecipeDetail() {
                 </h2>
                 <ol className='space-y-4'>
                   {recipe.instructions.map((instruction, index) => (
-                    <li key={index} className='flex'>
-                      <span className='flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-medium mr-3'>
+                    <li key={index} className='flex items-start'>
+                      <span className='flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-medium mr-3 mt-0.5'>
                         {index + 1}
                       </span>
-                      <span className='text-gray-700'>{instruction}</span>
+                      <span className='text-gray-700 mt-1.5'>
+                        {instruction}
+                      </span>
                     </li>
                   ))}
                 </ol>
