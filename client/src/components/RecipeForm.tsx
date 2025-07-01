@@ -40,7 +40,6 @@ export default function RecipeForm({
   });
 
   const [showOcr, setShowOcr] = useState(false);
-  const [ocrText, setOcrText] = useState('');
   const [aiResult, setAiResult] = useState<Omit<Recipe, '_id'> | null>(null);
 
   useEffect(() => {
@@ -60,7 +59,6 @@ export default function RecipeForm({
       setAiResult(parsed);
     } catch (error) {
       console.error('Failed to parse AI result:', error);
-      setOcrText(jsonText); // Fallback to showing raw text
     }
   };
 
