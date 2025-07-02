@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { Recipe } from '../types/recipe';
 import BackButton from './BackButton';
-import OcrExtractor from './OcrExtractor';
 import TrashIcon from './icons/TrashIcon';
+import { useModal } from '../context/ModalContext';
+import OcrExtractorModal from './modals/OcrExtractorModal';
 
 interface RecipeFormProps {
   onSubmit: (recipe: Omit<Recipe, '_id'>) => void;
@@ -39,8 +40,7 @@ export default function RecipeForm({
     };
   });
 
-  const [showOcr, setShowOcr] = useState(false);
-  const [aiResult, setAiResult] = useState<Omit<Recipe, '_id'> | null>(null);
+  const { openModal } = useModal();
 
   useEffect(() => {
     if (initialRecipe) {
@@ -56,16 +56,9 @@ export default function RecipeForm({
   const handleAiExtracted = (jsonText: string) => {
     try {
       const parsed = JSON.parse(jsonText);
-      setAiResult(parsed);
+      setFormData(parsed);
     } catch (error) {
       console.error('Failed to parse AI result:', error);
-    }
-  };
-
-  const useAiResult = () => {
-    if (aiResult) {
-      setFormData(aiResult);
-      setAiResult(null); // Clear the AI result after using it
     }
   };
 
@@ -111,52 +104,14 @@ export default function RecipeForm({
           <button
             type='button'
             className='ml-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 border border-blue-300'
-            onClick={() => setShowOcr((v) => !v)}
+            onClick={() =>
+              openModal(<OcrExtractorModal onExtracted={handleAiExtracted} />)
+            }
           >
             Extract from Image/PDF
           </button>
         )}
       </div>
-      {showOcr && <OcrExtractor onExtracted={handleAiExtracted} />}
-      {aiResult && (
-        <div className='mb-6 p-4 bg-green-50 border border-green-300 rounded-lg'>
-          <div className='flex justify-between items-start mb-3'>
-            <h3 className='text-lg font-semibold text-green-800'>
-              AI Extracted Recipe
-            </h3>
-            <button
-              type='button'
-              onClick={useAiResult}
-              className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700'
-            >
-              Use AI Result
-            </button>
-          </div>
-          <div className='space-y-2 text-sm'>
-            <div>
-              <strong>Title:</strong> {aiResult.title || 'Not found'}
-            </div>
-            <div>
-              <strong>Description:</strong>{' '}
-              {aiResult.description || 'Not found'}
-            </div>
-            <div>
-              <strong>Ingredients:</strong> {aiResult.ingredients?.length || 0}{' '}
-              found
-            </div>
-            <div>
-              <strong>Instructions:</strong>{' '}
-              {aiResult.instructions?.length || 0} steps
-            </div>
-            <div>
-              <strong>Cooking Time:</strong> {aiResult.cookingTime || 0} minutes
-            </div>
-            <div>
-              <strong>Servings:</strong> {aiResult.servings || 0}
-            </div>
-          </div>
-        </div>
-      )}
       <form
         onSubmit={handleSubmit}
         className='bg-white rounded-xl shadow-lg p-8'
