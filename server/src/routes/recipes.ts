@@ -12,9 +12,9 @@ const getAllRecipes = async (
   next: NextFunction
 ) => {
   try {
-    const { search } = req.query;
+    const { search, userId } = req.query;
 
-    let query = {};
+    let query: any = {};
     if (search) {
       query = {
         $or: [
@@ -23,6 +23,9 @@ const getAllRecipes = async (
           { 'ingredients.name': { $regex: search, $options: 'i' } },
         ],
       };
+    }
+    if (userId) {
+      query = { ...query, author: userId };
     }
 
     const recipes = await Recipe.find(query).sort({ createdAt: -1 });

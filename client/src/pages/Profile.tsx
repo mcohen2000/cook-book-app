@@ -1,8 +1,21 @@
 import { useAuth } from '../hooks/useAuth';
 import ProfileForm from '../components/ProfileForm';
+import { useCookbooks } from '../queries/useBooks';
+import { useRecipes } from '../queries/useRecipes';
+import { Link } from 'react-router';
+import type { Recipe } from '../types/recipe';
+import RecipeCard from '../components/RecipeCard';
+import CookbookCard from '../components/CookbookCard';
 
 const Profile = () => {
   const { user } = useAuth();
+  const { data: cookbooks = [], isLoading: loadingCookbooks } = useCookbooks(
+    user?.id
+  );
+  const { data: recipes = [], isLoading: loadingRecipes } = useRecipes(
+    '',
+    user?.id
+  ) as { data: Recipe[]; isLoading: boolean };
 
   const handleProfileUpdate = () => {
     // This callback can be used for any additional actions after profile update
@@ -20,12 +33,13 @@ const Profile = () => {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-8'>
       <div className='flex justify-between items-center'>
         <h1 className='text-2xl font-bold text-gray-900 px-4'>Profile</h1>
       </div>
 
-      <div className='bg-white shadow rounded-lg p-6 max-w-2xl mx-auto'>
+      {/* Profile Info Card */}
+      <div className='bg-white shadow rounded-lg p-6 max-w-4xl mx-auto'>
         <div className='space-y-6'>
           {/* Avatar Section */}
           <div className='flex items-center space-x-4'>
@@ -55,6 +69,50 @@ const Profile = () => {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Cookbooks Section */}
+      <div className='bg-white shadow rounded-lg p-6 max-w-4xl mx-auto'>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+          Your Cookbooks
+        </h3>
+        {loadingCookbooks ? (
+          <p className='text-gray-500'>Loading cookbooks...</p>
+        ) : cookbooks.length === 0 ? (
+          <p className='text-gray-500'>No cookbooks found.</p>
+        ) : (
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            {cookbooks.map((book) => (
+              <Link key={book._id} to={`/cookbooks/${book._id}`}>
+                <CookbookCard cookbook={book} />
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Recipes Section */}
+      <div className='bg-white shadow rounded-lg p-6 max-w-4xl mx-auto'>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>Your Recipes</h3>
+        {loadingRecipes ? (
+          <p className='text-gray-500'>Loading recipes...</p>
+        ) : recipes.length === 0 ? (
+          <p className='text-gray-500'>No recipes found.</p>
+        ) : (
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            {recipes.map((recipe: Recipe) => (
+              <Link key={recipe._id} to={`/recipes/${recipe._id}`}>
+                <RecipeCard
+                  id={recipe._id}
+                  title={recipe.title}
+                  description={recipe.description}
+                  cookingTime={recipe.cookingTime}
+                  servings={recipe.servings}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
