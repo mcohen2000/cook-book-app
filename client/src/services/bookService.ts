@@ -74,4 +74,12 @@ export const bookService = {
     if (!response.ok) throw new Error('Failed to remove recipe from cookbook');
     return response.json();
   },
+
+  deleteCookbook: async (id: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/books/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to delete cookbook');
+  },
 };
