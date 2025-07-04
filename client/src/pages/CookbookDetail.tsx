@@ -1,10 +1,14 @@
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useCookbook } from '../queries/useBooks';
 import RecipeCard from '../components/RecipeCard';
 import type { Recipe } from '../types/book';
 import { useAuth } from '../hooks/useAuth';
 import { useLikeCookbook, useUnlikeCookbook } from '../queries/useUsers';
 import HeartIcon from '../components/icons/HeartIcon';
+import { useDeleteCookbook } from '../queries/useBooks';
+import { useNavigate } from 'react-router';
+import BackButton from '../components/BackButton';
+import TrashIcon from '../components/icons/TrashIcon';
 
 const CookbookDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +20,8 @@ const CookbookDetail = () => {
   const { user: currentUser } = useAuth();
   const likeCookbook = useLikeCookbook();
   const unlikeCookbook = useUnlikeCookbook();
+  const deleteCookbook = useDeleteCookbook();
+  const navigate = useNavigate();
 
   if (cookbookLoading) {
     return (
@@ -44,6 +50,11 @@ const CookbookDetail = () => {
 
   // At this point, cookbook is guaranteed to be defined
   const isLiked = currentUser?.likedCookbooks?.includes(cookbook._id);
+  const isAuthor =
+    currentUser &&
+    (cookbook.author === currentUser.id ||
+      (typeof cookbook.author === 'object' &&
+        cookbook.author._id === currentUser.id));
 
   const handleToggleLike = () => {
     if (!currentUser) return;
@@ -54,6 +65,15 @@ const CookbookDetail = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteCookbook.mutateAsync(cookbook._id);
+      navigate('/cookbooks');
+    } catch (err) {
+      console.error('Failed to delete cookbook:', err);
+    }
+  };
+
   // Get author name (could be string or User object)
   const authorName =
     typeof cookbook.author === 'string'
@@ -61,70 +81,107 @@ const CookbookDetail = () => {
       : cookbook.author.name;
 
   return (
-    <div className='space-y-6'>
-      {/* Cookbook Header */}
-      <div className='bg-white shadow rounded-lg p-6'>
-        <div className='flex justify-between items-start mb-4'>
-          <div>
-            <h1 className='text-3xl font-bold text-gray-900 mb-2'>
-              {cookbook.title}
-            </h1>
-            <p className='text-gray-600 mb-2'>Created by {authorName}</p>
-            {cookbook.createdAt && (
-              <p className='text-sm text-gray-500'>
-                Created {new Date(cookbook.createdAt).toLocaleDateString()}
-              </p>
-            )}
-          </div>
-          <div className='text-right flex flex-col items-end'>
-            <button
-              onClick={handleToggleLike}
-              className={`mb-2 p-2 rounded-full transition-colors ${
-                isLiked
-                  ? 'bg-red-100 hover:bg-red-200'
-                  : 'bg-gray-100 hover:bg-red-100'
-              }`}
-              title={isLiked ? 'Unlike Cookbook' : 'Like Cookbook'}
-              style={{ width: 40, height: 40 }}
-            >
-              <HeartIcon filled={isLiked} size={24} />
-            </button>
-            <div className='text-2xl font-bold text-blue-500'>
-              {cookbook.recipes.length}
+    <>
+      <div className='flex justify-between items-center mb-6'>
+        <BackButton to='/books' text='Back to Cookbooks' />
+        <div className='space-x-4'>
+          {isAuthor && (
+            <>
+              <Link
+                to={`/cookbooks/${id}/edit`}
+                className='inline-flex items-center px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors'
+              >
+                <svg
+                  className='w-5 h-5 mr-2'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+                  />
+                </svg>
+                Edit Cookbook
+              </Link>
+              <button
+                onClick={handleDelete}
+                className='inline-flex items-center px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
+              >
+                <TrashIcon className='mr-2' />
+                Delete Cookbook
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+      <div className='space-y-6'>
+        {/* Cookbook Header */}
+        <div className='bg-white shadow rounded-lg p-6'>
+          <div className='flex justify-between items-start mb-4'>
+            <div>
+              <h1 className='text-3xl font-bold text-gray-900 mb-2'>
+                {cookbook.title}
+              </h1>
+              <p className='text-gray-600 mb-2'>Created by {authorName}</p>
+              {cookbook.createdAt && (
+                <p className='text-sm text-gray-500'>
+                  Created {new Date(cookbook.createdAt).toLocaleDateString()}
+                </p>
+              )}
             </div>
-            <div className='text-sm text-gray-600'>
-              {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
+            <div className='text-right flex flex-col items-end'>
+              <button
+                onClick={handleToggleLike}
+                className={`mb-2 p-2 rounded-full transition-colors ${
+                  isLiked
+                    ? 'bg-red-100 hover:bg-red-200'
+                    : 'bg-gray-100 hover:bg-red-100'
+                }`}
+                title={isLiked ? 'Unlike Cookbook' : 'Like Cookbook'}
+                style={{ width: 40, height: 40 }}
+              >
+                <HeartIcon filled={isLiked} size={24} />
+              </button>
+              <div className='text-2xl font-bold text-blue-500'>
+                {cookbook.recipes.length}
+              </div>
+              <div className='text-sm text-gray-600'>
+                {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Recipes Section */}
-      <div>
-        <h2 className='text-2xl font-bold text-gray-900 mb-4 px-4'>
-          Recipes in this Cookbook
-        </h2>
+        {/* Recipes Section */}
+        <div>
+          <h2 className='text-2xl font-bold text-gray-900 mb-4 px-4'>
+            Recipes in this Cookbook
+          </h2>
 
-        {cookbook.recipes.length === 0 ? (
-          <div className='text-center py-8'>
-            <p className='text-gray-600'>No recipes in this cookbook yet.</p>
-          </div>
-        ) : (
-          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-            {cookbook.recipes.map((recipe: Recipe) => (
-              <RecipeCard
-                key={recipe._id}
-                id={recipe._id}
-                title={recipe.title}
-                description={recipe.description}
-                cookingTime={recipe.cookingTime}
-                servings={recipe.servings}
-              />
-            ))}
-          </div>
-        )}
+          {cookbook.recipes.length === 0 ? (
+            <div className='text-center py-8'>
+              <p className='text-gray-600'>No recipes in this cookbook yet.</p>
+            </div>
+          ) : (
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+              {cookbook.recipes.map((recipe: Recipe) => (
+                <RecipeCard
+                  key={recipe._id}
+                  id={recipe._id}
+                  title={recipe.title}
+                  description={recipe.description}
+                  cookingTime={recipe.cookingTime}
+                  servings={recipe.servings}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

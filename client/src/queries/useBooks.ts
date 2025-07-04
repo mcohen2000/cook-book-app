@@ -79,3 +79,14 @@ export const useRemoveRecipeFromCookbook = () => {
     },
   });
 };
+
+export const useDeleteCookbook = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => bookService.deleteCookbook(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cookbooks'] });
+      queryClient.invalidateQueries({ queryKey: ['user-cookbooks'] });
+    },
+  });
+};
