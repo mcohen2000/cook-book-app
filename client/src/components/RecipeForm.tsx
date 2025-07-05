@@ -25,26 +25,24 @@ export default function RecipeForm({
   backTo,
   backText,
 }: RecipeFormProps) {
-  const [formData, setFormData] = useState<Omit<Recipe, '_id'>>(() => {
-    if (initialRecipe) {
-      const { _id, createdAt, ...rest } = initialRecipe;
-      return rest;
-    }
-    return {
-      title: '',
-      description: '',
-      ingredients: [{ name: '', amount: '' }],
-      instructions: [''],
-      cookingTime: 0,
-      servings: 1,
-    };
-  });
+  const defaultRecipe = {
+    title: '',
+    description: '',
+    ingredients: [{ name: '', amount: '' }],
+    instructions: [''],
+    cookingTime: 0,
+    servings: 1,
+  };
+  const [formData, setFormData] = useState<Omit<Recipe, '_id'>>(defaultRecipe);
 
   const { openModal } = useModal();
 
   useEffect(() => {
     if (initialRecipe) {
-      setFormData(initialRecipe);
+      const { _id, createdAt, ...rest } = initialRecipe;
+      setFormData(rest);
+    } else {
+      setFormData(defaultRecipe);
     }
   }, [initialRecipe]);
 
