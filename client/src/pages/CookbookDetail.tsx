@@ -83,7 +83,7 @@ const CookbookDetail = () => {
   return (
     <>
       <div className='flex justify-between items-center mb-6'>
-        <BackButton to='/books' text='Back to Cookbooks' />
+        <BackButton to='/cookbooks' text='Back to Cookbooks' />
         <div className='space-x-4'>
           {isAuthor && (
             <>

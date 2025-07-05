@@ -27,8 +27,15 @@ export const useCookbook = (id: string) => {
 export const useCreateCookbook = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ title, recipeId }: { title: string; recipeId?: string }) =>
-      bookService.createCookbook(title, recipeId),
+    mutationFn: ({
+      title,
+      recipeId,
+      description,
+    }: {
+      title: string;
+      recipeId?: string;
+      description?: string;
+    }) => bookService.createCookbook(title, recipeId, description),
     onSuccess: (newCookbook) => {
       // Invalidate and refetch both cookbooks and user cookbooks
       queryClient.invalidateQueries({ queryKey: ['cookbooks'] });
@@ -87,6 +94,26 @@ export const useDeleteCookbook = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cookbooks'] });
       queryClient.invalidateQueries({ queryKey: ['user-cookbooks'] });
+    },
+  });
+};
+
+export const useUpdateCookbook = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      title,
+      description,
+    }: {
+      id: string;
+      title: string;
+      description?: string;
+    }) => bookService.updateCookbook(id, title, description),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['cookbooks'] });
+      queryClient.invalidateQueries({ queryKey: ['user-cookbooks'] });
+      queryClient.invalidateQueries({ queryKey: ['cookbook', id] });
     },
   });
 };
