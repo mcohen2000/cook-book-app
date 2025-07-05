@@ -31,8 +31,12 @@ export const bookService = {
     return response.json();
   },
 
-  createCookbook: async (title: string, recipeId?: string): Promise<Book> => {
-    const body: any = { title };
+  createCookbook: async (
+    title: string,
+    recipeId?: string,
+    description?: string
+  ): Promise<Book> => {
+    const body: any = { title, description };
     if (recipeId) body.recipes = [recipeId];
     const response = await fetch(`${API_URL}/books`, {
       method: 'POST',
@@ -81,5 +85,20 @@ export const bookService = {
       credentials: 'include',
     });
     if (!response.ok) throw new Error('Failed to delete cookbook');
+  },
+
+  updateCookbook: async (
+    id: string,
+    title: string,
+    description?: string
+  ): Promise<Book> => {
+    const response = await fetch(`${API_URL}/books/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, description }),
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to update cookbook');
+    return response.json();
   },
 };

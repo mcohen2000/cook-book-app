@@ -15,6 +15,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthProvider';
 import { ModalProvider } from './context/ModalContext';
+import EditCookbook from './pages/EditCookbook';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,7 @@ function App() {
                 <Route path='/cookbooks' element={<BrowseCookbooks />} />
                 <Route path='/cookbooks/create' element={<CreateCookbook />} />
                 <Route path='/cookbooks/:id' element={<CookbookDetail />} />
+                <Route path='/cookbooks/:id/edit' element={<EditCookbook />} />
                 <Route path='/recipes/create' element={<CreateRecipe />} />
                 <Route path='/recipes/:id' element={<RecipeDetail />} />
                 <Route path='/recipes/:id/edit' element={<EditRecipe />} />
