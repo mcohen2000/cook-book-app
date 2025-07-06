@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 import Recipe from '../models/Recipe';
+import Book from '../models/Book';
 
 interface JwtPayload {
   userId: string;
@@ -56,6 +57,30 @@ export const isAuthor = async (
       res
         .status(403)
         .json({ message: 'Forbidden: You are not the author of this recipe' });
+      return;
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+};
+
+export const isBookAuthor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const bookId = req.params.id;
+    const book = await Book.findById(bookId);
+    if (!book) {
+      res.status(404).json({ message: 'Book not found' });
+      return;
+    }
+    if (book.author.toString() !== req.user._id.toString()) {
+      res
+        .status(403)
+        .json({ message: 'Forbidden: You are not the author of this book' });
       return;
     }
     next();
