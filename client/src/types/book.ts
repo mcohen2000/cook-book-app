@@ -1,6 +1,7 @@
 export interface Book {
   _id: string;
   title: string;
+  description?: string;
   recipes: Recipe[];
   author: string | User;
   createdAt?: string;

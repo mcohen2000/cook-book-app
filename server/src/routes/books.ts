@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import Book from '../models/Book';
-import { auth, isAuthor as isBookAuthor } from '../middleware/auth';
+import { auth, isBookAuthor } from '../middleware/auth';
 
 const router: Router = express.Router();
 

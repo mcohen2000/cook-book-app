@@ -6,6 +6,11 @@ const bookSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  description: {
+    type: String,
+    required: false,
+    trim: true,
+  },
   recipes: [
     {
       type: mongoose.Schema.Types.ObjectId,

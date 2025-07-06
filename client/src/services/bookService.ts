@@ -93,7 +93,7 @@ export const bookService = {
     description?: string
   ): Promise<Book> => {
     const response = await fetch(`${API_URL}/books/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, description }),
       credentials: 'include',

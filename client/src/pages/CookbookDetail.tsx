@@ -125,6 +125,9 @@ const CookbookDetail = () => {
               <h1 className='text-3xl font-bold text-gray-900 mb-2'>
                 {cookbook.title}
               </h1>
+              {cookbook.description && (
+                <p className='text-gray-600 mb-4'>{cookbook.description}</p>
+              )}
               <p className='text-gray-600 mb-2'>Created by {authorName}</p>
               {cookbook.createdAt && (
                 <p className='text-sm text-gray-500'>
