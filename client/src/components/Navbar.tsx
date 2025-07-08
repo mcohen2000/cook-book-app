@@ -5,7 +5,7 @@ import { logout } from '../services/userService';
 import { useQueryClient } from '@tanstack/react-query';
 import DropdownMenu from './DropdownMenu';
 import UserAvatarIcon from './UserAvatarIcon';
-import PlusIcon from './PlusIcon';
+import PlusIcon from './icons/PlusIcon';
 import DownwardArrowIcon from './DownwardArrowIcon';
 
 const Navbar = () => {
