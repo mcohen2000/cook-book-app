@@ -19,6 +19,11 @@ const CookbookCard = ({ cookbook }: CookbookCardProps) => {
           <h3 className='text-lg font-medium text-gray-900 mb-2'>
             {cookbook.title}
           </h3>
+          {cookbook.description && (
+            <p className='text-gray-700 text-sm mb-2 line-clamp-2'>
+              {cookbook.description}
+            </p>
+          )}
           <div className='flex items-center justify-between text-sm text-gray-500 mb-4'>
             <div className='flex items-center'>
               <svg
