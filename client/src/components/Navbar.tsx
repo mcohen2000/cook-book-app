@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import DropdownMenu from './DropdownMenu';
 import UserAvatarIcon from './UserAvatarIcon';
 import PlusIcon from './icons/PlusIcon';
-import DownwardArrowIcon from './DownwardArrowIcon';
+import DownwardArrowIcon from './icons/DownwardArrowIcon';
 
 const Navbar = () => {
   const { user } = useContext(AuthContext) || {};
@@ -61,7 +61,7 @@ const Navbar = () => {
                       className='flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'
                       aria-label='Create'
                     >
-                      <PlusIcon />
+                      <PlusIcon className='w-6 h-6'/>
                     </span>
                   }
                   links={[

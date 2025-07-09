@@ -5,6 +5,8 @@ import {
   useAddRecipeToCookbook,
   useRemoveRecipeFromCookbook,
 } from '../../queries/useBooks';
+import CheckIcon from '../icons/CheckIcon';
+import XIcon from '../icons/XIcon';
 
 interface AddToCookbookModalProps {
   recipeId: string;
@@ -175,22 +177,7 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
               disabled={isLoading}
               title='Create'
             >
-              {/* Checkmark icon */}
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                width={22}
-                height={22}
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M5 13l4 4L19 7'
-                />
-              </svg>
+              <CheckIcon className='w-[22px] h-[22px]' />
             </button>
             <button
               type='button'
@@ -206,22 +193,7 @@ const AddToCookbookModal: React.FC<AddToCookbookModalProps> = ({
               disabled={isLoading}
               title='Cancel'
             >
-              {/* X icon */}
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                width={22}
-                height={22}
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M6 18L18 6M6 6l12 12'
-                />
-              </svg>
+              <XIcon className='w-[22px] h-[22px]' />
             </button>
           </div>
         )}

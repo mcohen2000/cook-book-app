@@ -34,7 +34,7 @@ export default function OcrExtractorModal({
       <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16 }}>
         Extract Recipe from Image or PDF
       </h2>
-      <OcrExtractor onExtracted={handleExtracted} suppressSuccess />
+      <OcrExtractor onExtracted={handleExtracted} />
       {showSuccess && parsedResult && (
         <div className='mb-6 p-4 bg-green-50 border border-green-300 rounded-lg'>
           <div className='flex justify-between items-start mb-3'>
