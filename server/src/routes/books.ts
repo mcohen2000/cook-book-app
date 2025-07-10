@@ -16,11 +16,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
     if (search) {
       const searchRegex = new RegExp(search as string, 'i');
-      filter.$or = [
-        { title: searchRegex },
-        { description: searchRegex },
-        { 'author.name': searchRegex },
-      ];
+      filter.$or = [{ title: searchRegex }, { description: searchRegex }];
     }
 
     const books = await Book.find(filter)
