@@ -4,14 +4,25 @@ import { auth, isBookAuthor } from '../middleware/auth';
 
 const router: Router = express.Router();
 
-// Get all cookbooks (optionally filter by userId)
+// Get all cookbooks (optionally filter by userId and search)
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.query;
+    const { userId, search } = req.query;
     let filter: any = {};
+
     if (userId) {
       filter.author = userId;
     }
+
+    if (search) {
+      const searchRegex = new RegExp(search as string, 'i');
+      filter.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { 'author.name': searchRegex },
+      ];
+    }
+
     const books = await Book.find(filter)
       .populate('recipes', 'title description cookingTime servings')
       .populate('author', 'name')
