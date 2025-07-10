@@ -3,10 +3,23 @@ import type { Book, BookModalItem } from '../types/book';
 const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api`;
 
 export const bookService = {
-  getCookbooks: async (userId?: string): Promise<Book[]> => {
+  getCookbooks: async ({
+    userId,
+    search,
+  }: {
+    userId?: string;
+    search?: string;
+  }): Promise<Book[]> => {
     let url = `${API_URL}/books`;
+    const params = new URLSearchParams();
     if (userId) {
-      url += `?userId=${userId}`;
+      params.append('userId', userId);
+    }
+    if (search) {
+      params.append('search', search);
+    }
+    if (params.toString()) {
+      url += `?${params.toString()}`;
     }
     const response = await fetch(url, {
       credentials: 'include',

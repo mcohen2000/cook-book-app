@@ -9,9 +9,9 @@ import CookbookCard from '../components/CookbookCard';
 
 const Profile = () => {
   const { user } = useAuth();
-  const { data: cookbooks = [], isLoading: loadingCookbooks } = useCookbooks(
-    user?.id
-  );
+  const { data: cookbooks = [], isLoading: loadingCookbooks } = useCookbooks({
+    userId: user?.id,
+  });
   const { data: recipes = [], isLoading: loadingRecipes } = useRecipes(
     '',
     user?.id
