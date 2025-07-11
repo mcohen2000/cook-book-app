@@ -13,7 +13,12 @@ const BrowseCookbooks = () => {
     setSearchQuery(search);
   }, [search]);
 
-  const { data: books = [], isLoading, error } = useCookbooks({ search });
+  const {
+    data: books = [],
+    isLoading,
+    error,
+    isFetching,
+  } = useCookbooks({ search });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,33 +33,6 @@ const BrowseCookbooks = () => {
     setSearchQuery('');
     setSearchParams({});
   };
-
-  if (isLoading) {
-    return (
-      <div className='space-y-6'>
-        <div className='flex justify-between items-center'>
-          <h2 className='text-2xl font-bold text-gray-900 px-4'>Cookbooks</h2>
-        </div>
-        <div className='text-center py-8'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-          <p className='mt-2 text-gray-600'>Loading cookbooks...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='space-y-6'>
-        <div className='flex justify-between items-center'>
-          <h2 className='text-2xl font-bold text-gray-900 px-4'>Cookbooks</h2>
-        </div>
-        <div className='text-center py-8'>
-          <p className='text-red-500'>{(error as Error).message}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className='space-y-6'>
@@ -90,7 +68,16 @@ const BrowseCookbooks = () => {
         </form>
       </div>
 
-      {books.length === 0 ? (
+      {isLoading || isFetching ? (
+        <div className='text-center py-8'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
+          <p className='mt-2 text-gray-600'>Loading cookbooks...</p>
+        </div>
+      ) : error ? (
+        <div className='text-center py-8'>
+          <p className='text-red-500'>{(error as Error).message}</p>
+        </div>
+      ) : books.length === 0 ? (
         <div className='text-center py-8'>
           <p className='text-gray-600'>
             {searchQuery
