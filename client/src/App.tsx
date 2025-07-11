@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
-import BrowsePage from './pages/BrowsePage';
+import BrowsePage from './pages/BrowseRecipes';
 import BrowseCookbooks from './pages/BrowseCookbooks';
 import CookbookDetail from './pages/CookbookDetail';
 import CreateRecipe from './pages/CreateRecipe';
