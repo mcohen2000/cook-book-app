@@ -37,22 +37,38 @@ export default function BrowsePage() {
 
   return (
     <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
-        <h2 className='text-2xl font-bold text-gray-900 px-4'>Recipes</h2>
+      <div className='flex justify-between items-center px-4'>
+        <h2 className='text-2xl font-bold text-gray-900'>Recipes</h2>
+      </div>
+
+      {/* Search Bar */}
+      <div className='px-4'>
         <form onSubmit={handleSearch} className='flex gap-2'>
           <input
             type='text'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder='Search recipes...'
-            className='px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
           />
           <button
             type='submit'
-            className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+            className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
           >
             Search
           </button>
+          {searchQuery && (
+            <button
+              type='button'
+              onClick={() => {
+                setSearchQuery('');
+                setSearchParams({});
+              }}
+              className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors'
+            >
+              Clear
+            </button>
+          )}
         </form>
       </div>
 
@@ -70,7 +86,7 @@ export default function BrowsePage() {
           <p className='text-gray-600'>No recipes found</p>
         </div>
       ) : (
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 px-4'>
           {(recipes as Recipe[]).map((recipe: Recipe) => (
             <RecipeCard
               key={recipe._id}
