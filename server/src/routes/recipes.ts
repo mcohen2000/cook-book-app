@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction, Router } from 'express';
 import Recipe from '../models/Recipe';
 import { auth, isAuthor } from '../middleware/auth';
 import axios from 'axios';
+import { ocrLlmPrompt } from '../utils/prompt';
 
 const router: Router = express.Router();
 
@@ -125,31 +126,7 @@ router.post('/ocr', async (req, res) => {
     return;
   }
 
-  const prompt = `You are a helpful assistant. The following is a raw OCR scan of a recipe. Please extract and organize the information into a structured JSON format with the following fields:
-
-{
-  "title": "Recipe title",
-  "description": "Recipe description",
-  "ingredients": [
-    {"name": "ingredient name", "amount": "amount/quantity"}
-  ],
-  "instructions": [
-  
-  ],
-  "cookingTime": 30,
-  "servings": 4
-}
-
-Make sure to list all the ingredients and their amounts.
-
-Make sure to get the instructions and make each step a string in the array.
-
-If you can't find a description, try to come up with a short creative description in complete sentence or two.
-
-If any information is missing, use empty strings for text fields, empty arrays for lists, and 0 for numbers. Return ONLY the JSON object, no additional text.
-
-Raw OCR Text:
-${text}`;
+  const prompt = ocrLlmPrompt(text);
 
   try {
     const response = await axios.post(`${llmUrl}`, {

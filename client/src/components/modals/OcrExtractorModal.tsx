@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import OcrExtractor from '../OcrExtractor';
 import { useModal } from '../../context/ModalContext';
+import ErrorIcon from '../icons/ErrorIcon';
 
 export default function OcrExtractorModal({
   onExtracted,
@@ -11,14 +12,16 @@ export default function OcrExtractorModal({
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [parsedResult, setParsedResult] = useState<any>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleExtracted = (text: string) => {
     setAiResult(text);
     setShowSuccess(true);
+    setError(null);
     try {
       setParsedResult(JSON.parse(text));
     } catch {
-      setParsedResult(null);
+      setError('Failed to parse the AI response.');
     }
   };
 
@@ -29,12 +32,33 @@ export default function OcrExtractorModal({
     }
   };
 
+  const clearAiResult = () => {
+    setAiResult(null);
+    setParsedResult(null);
+    setShowSuccess(false);
+  };
+
   return (
     <div style={{ minWidth: 300 }}>
       <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16 }}>
         Extract Recipe from Image or PDF
       </h2>
-      <OcrExtractor onExtracted={handleExtracted} />
+      <OcrExtractor
+        onExtracted={handleExtracted}
+        setError={setError}
+        error={error}
+        clearAiResult={clearAiResult}
+      />
+
+      {error && (
+        <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-4'>
+          <div className='flex items-center'>
+            <ErrorIcon className='w-5 h-5 text-red-500 mr-2' />
+            <span className='text-red-700 font-medium'>{error}</span>
+          </div>
+        </div>
+      )}
+
       {showSuccess && parsedResult && (
         <div className='mb-6 p-4 bg-green-50 border border-green-300 rounded-lg'>
           <div className='flex justify-between items-start mb-3'>
