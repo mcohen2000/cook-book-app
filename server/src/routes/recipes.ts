@@ -134,9 +134,33 @@ router.post('/ocr', async (req, res) => {
       prompt,
       stream: false,
     });
-    const result = response.data.response || response.data;
-    res.json({ result });
-    return;
+    let result = response.data.response || response.data;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(result);
+      res.json({ result: parsed });
+      return;
+    } catch (err) {
+      const fixPrompt = `The following is invalid JSON. Please fix and return only valid JSON:\n\n${result}`;
+      const fixResponse = await axios.post(`${llmUrl}`, {
+        model: 'llama3.2',
+        prompt: fixPrompt,
+        stream: false,
+      });
+      let fixedResult = fixResponse.data.response || fixResponse.data;
+      try {
+        parsed = JSON.parse(fixedResult);
+        res.json({ result: parsed });
+        return;
+      } catch (err2) {
+        res.status(500).json({
+          error:
+            'Failed to parse LLM response as valid JSON, even after attempting to fix.',
+        });
+        return;
+      }
+    }
   } catch (error) {
     console.error('Ollama error:', error);
     res.status(500).json({ error: 'Failed to process with Ollama' });
