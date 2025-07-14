@@ -9,21 +9,21 @@ export const ocrLlmPrompt = (
     {"name": "ingredient name", "amount": "amount/quantity"}
   ],
   "instructions": [
-  
+    "example text", 
   ],
   "cookingTime": 30,
   "servings": 4
 }
 
-Make sure to list all the ingredients and their amounts.
+Make sure to list all the ingredients and their amounts. Be sure to include every ingredient and amount as they appear in the text.
 
-Make sure to get the instructions and make each step a string in the array.
+Make sure to get the instructions and make each step a string in the array, NOT an object.
 
 If you can't find a description, try to come up with a short creative description in complete sentence or two.
 
 If any information is missing, use empty strings for text fields, empty arrays for lists, and 0 for numbers. Return ONLY the JSON object, no additional text.
 
-Generate the JSON output as a single, continuous line. This means there should be no newlines (\n), tabs (\t), or any spaces used for indentation. Ensure all string values and keys are properly escaped (e.g., \" for internal double quotes). Crucially, use only standard ASCII characters for all text within the JSON, including apostrophes and quotation marks (e.g., ' for apostrophes, " for quotation marks, not ’ or “/”). Do not use non-breaking spaces (U+00A0).
+Generate the JSON output as a single, continuous line. This means there should be no newlines (\n), tabs (\t), or any spaces used for indentation. Ensure all string values and keys are properly escaped (e.g., \" for internal double quotes). Do not use non-breaking spaces (U+00A0). Do not use ASCII characters for apostrophes or quotation marks. Replace unicode characters with valid JSON characters, like ’ with ' and “ with ".
 
 Raw OCR Text:
 ${text}`;
