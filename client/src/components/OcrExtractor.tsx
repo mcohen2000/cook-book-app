@@ -3,9 +3,10 @@ import Tesseract from 'tesseract.js';
 import { useOcrRecipe } from '../queries/useRecipes';
 import UploadIcon from './icons/UploadIcon';
 import PlusIcon from './icons/PlusIcon';
+import type { Recipe } from '../types/recipe';
 
 interface OcrExtractorProps {
-  onExtracted: (text: string) => void;
+  onExtracted: (recipe: Recipe) => void;
   setError: (error: string | null) => void;
   error: string | null;
   clearAiResult: () => void;

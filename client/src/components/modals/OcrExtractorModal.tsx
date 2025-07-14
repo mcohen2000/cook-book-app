@@ -2,27 +2,22 @@ import { useState } from 'react';
 import OcrExtractor from '../OcrExtractor';
 import { useModal } from '../../context/ModalContext';
 import ErrorIcon from '../icons/ErrorIcon';
+import type { Recipe } from '../../types/recipe';
 
 export default function OcrExtractorModal({
   onExtracted,
 }: {
-  onExtracted: (json: string) => void;
+  onExtracted: (json: Recipe) => void;
 }) {
   const { closeModal } = useModal();
-  const [aiResult, setAiResult] = useState<string | null>(null);
-  const [parsedResult, setParsedResult] = useState<any>(null);
+  const [aiResult, setAiResult] = useState<Recipe | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleExtracted = (text: string) => {
-    setAiResult(text);
+  const handleExtracted = (recipe: Recipe) => {
+    setAiResult(recipe);
     setShowSuccess(true);
     setError(null);
-    try {
-      setParsedResult(JSON.parse(text));
-    } catch {
-      setError('Failed to parse the AI response.');
-    }
   };
 
   const handleConfirm = () => {
@@ -34,7 +29,6 @@ export default function OcrExtractorModal({
 
   const clearAiResult = () => {
     setAiResult(null);
-    setParsedResult(null);
     setShowSuccess(false);
   };
 
@@ -59,7 +53,7 @@ export default function OcrExtractorModal({
         </div>
       )}
 
-      {showSuccess && parsedResult && (
+      {showSuccess && aiResult && (
         <div className='mb-6 p-4 bg-green-50 border border-green-300 rounded-lg'>
           <div className='flex justify-between items-start mb-3'>
             <h3 className='text-lg font-semibold text-green-800'>
@@ -75,26 +69,25 @@ export default function OcrExtractorModal({
           </div>
           <div className='space-y-2 text-sm'>
             <div>
-              <strong>Title:</strong> {parsedResult.title || 'Not found'}
+              <strong>Title:</strong> {aiResult.title || 'Not found'}
             </div>
             <div>
               <strong>Description:</strong>{' '}
-              {parsedResult.description || 'Not found'}
+              {aiResult.description || 'Not found'}
             </div>
             <div>
-              <strong>Ingredients:</strong>{' '}
-              {parsedResult.ingredients?.length || 0} found
+              <strong>Ingredients:</strong> {aiResult.ingredients?.length || 0}{' '}
+              found
             </div>
             <div>
               <strong>Instructions:</strong>{' '}
-              {parsedResult.instructions?.length || 0} steps
+              {aiResult.instructions?.length || 0} steps
             </div>
             <div>
-              <strong>Cooking Time:</strong> {parsedResult.cookingTime || 0}{' '}
-              minutes
+              <strong>Cooking Time:</strong> {aiResult.cookingTime || 0} minutes
             </div>
             <div>
-              <strong>Servings:</strong> {parsedResult.servings || 0}
+              <strong>Servings:</strong> {aiResult.servings || 0}
             </div>
           </div>
         </div>
