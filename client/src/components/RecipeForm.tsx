@@ -51,10 +51,9 @@ export default function RecipeForm({
     onSubmit(formData);
   };
 
-  const handleAiExtracted = (jsonText: string) => {
+  const handleAiExtracted = (recipe: Recipe) => {
     try {
-      const parsed = JSON.parse(jsonText);
-      setFormData(parsed);
+      setFormData(recipe);
     } catch (error) {
       console.error('Failed to parse AI result:', error);
     }

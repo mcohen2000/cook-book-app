@@ -70,7 +70,7 @@ export const recipeService = {
     }
   },
 
-  ocrRecipe: async (text: string): Promise<string> => {
+  ocrRecipe: async (text: string): Promise<Recipe> => {
     const response = await fetch(`${API_URL}/recipes/ocr`, {
       method: 'POST',
       headers: {
