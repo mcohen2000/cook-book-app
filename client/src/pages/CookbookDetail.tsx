@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router';
 import BackButton from '../components/BackButton';
 import TrashIcon from '../components/icons/TrashIcon';
 import EditIcon from '../components/icons/EditIcon';
+import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
+import { useModal } from '../context/ModalContext';
 
 const CookbookDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +25,7 @@ const CookbookDetail = () => {
   const unlikeCookbook = useUnlikeCookbook();
   const deleteCookbook = useDeleteCookbook();
   const navigate = useNavigate();
+  const { openModal, closeModal } = useModal();
 
   if (cookbookLoading) {
     return (
@@ -69,10 +72,23 @@ const CookbookDetail = () => {
   const handleDelete = async () => {
     try {
       await deleteCookbook.mutateAsync(cookbook._id);
+      closeModal();
       navigate('/cookbooks');
     } catch (err) {
+      // Optionally show error
       console.error('Failed to delete cookbook:', err);
     }
+  };
+
+  const handleOpenDeleteModal = () => {
+    openModal(
+      <ConfirmDeleteModal
+        itemType='cookbook'
+        itemName={cookbook.title}
+        onConfirm={handleDelete}
+        loading={deleteCookbook.isPending}
+      />
+    );
   };
 
   // Get author name (could be string or User object)
@@ -96,7 +112,7 @@ const CookbookDetail = () => {
                 Edit Cookbook
               </Link>
               <button
-                onClick={handleDelete}
+                onClick={handleOpenDeleteModal}
                 className='inline-flex items-center px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
               >
                 <TrashIcon className='mr-2' />
