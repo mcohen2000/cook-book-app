@@ -13,6 +13,7 @@ import TrashIcon from '../components/icons/TrashIcon';
 import EditIcon from '../components/icons/EditIcon';
 import ClockIcon from '../components/icons/ClockIcon';
 import ServingsIcon from '../components/icons/ServingsIcon';
+import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +22,7 @@ export default function RecipeDetail() {
   const deleteRecipe = useDeleteRecipe();
   const { user: currentUser, isLoading: authLoading } = useAuth();
   const isAuthor = checkIsAuthor(currentUser?.id || '', recipe?.author || '');
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const likeRecipe = useLikeRecipe();
   const unlikeRecipe = useUnlikeRecipe();
 
@@ -57,10 +58,23 @@ export default function RecipeDetail() {
   const handleDelete = async () => {
     try {
       await deleteRecipe.mutateAsync(id!);
+      closeModal();
       navigate('/recipes');
     } catch (err) {
+      // Optionally show error
       console.error('Failed to delete recipe:', err);
     }
+  };
+
+  const handleOpenDeleteModal = () => {
+    openModal(
+      <ConfirmDeleteModal
+        itemType='recipe'
+        itemName={recipe.title}
+        onConfirm={handleDelete}
+        loading={deleteRecipe.isPending}
+      />
+    );
   };
 
   const handleAddToCookbook = () => {
@@ -93,7 +107,7 @@ export default function RecipeDetail() {
                 Edit Recipe
               </Link>
               <button
-                onClick={handleDelete}
+                onClick={handleOpenDeleteModal}
                 className='inline-flex items-center px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
               >
                 <TrashIcon className='mr-2' />
