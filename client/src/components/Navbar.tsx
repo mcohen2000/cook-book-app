@@ -58,10 +58,10 @@ const Navbar = () => {
                   align='right'
                   trigger={
                     <span
-                      className='flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'
+                      className='flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer'
                       aria-label='Create'
                     >
-                      <PlusIcon className='w-6 h-6'/>
+                      <PlusIcon className='w-6 h-6' />
                     </span>
                   }
                   links={[
@@ -73,14 +73,11 @@ const Navbar = () => {
                 <DropdownMenu
                   align='right'
                   trigger={
-                    <span className='flex items-center'>
-                      <span
-                        className='flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'
-                        aria-label='User menu'
-                      >
-                        <UserAvatarIcon name={user.name} />
-                      </span>
-                      <DownwardArrowIcon className='ml-2 w-4 h-4 text-gray-700' />
+                    <span
+                      className='flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer'
+                      aria-label='User menu'
+                    >
+                      <UserAvatarIcon name={user.name} />
                     </span>
                   }
                   links={({ setOpen }) => [

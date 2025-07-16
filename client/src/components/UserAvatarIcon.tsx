@@ -5,7 +5,7 @@ interface UserAvatarIconProps {
 
 const UserAvatarIcon = ({ name, className = '' }: UserAvatarIconProps) => (
   <div
-    className={`w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium ${className}`}
+    className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium ${className}`}
   >
     {name ? name.charAt(0).toUpperCase() : 'U'}
   </div>
