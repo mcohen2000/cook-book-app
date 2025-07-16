@@ -125,8 +125,8 @@ const CookbookDetail = () => {
       <div className='space-y-6'>
         {/* Cookbook Header */}
         <div className='bg-white shadow rounded-lg p-6'>
-          <div className='flex justify-between items-start mb-4'>
-            <div>
+          <div className='flex flex-row justify-between items-stretch mb-4'>
+            <div className='flex-1'>
               <h1 className='text-3xl font-bold text-gray-900 mb-2'>
                 {cookbook.title}
               </h1>
@@ -140,10 +140,10 @@ const CookbookDetail = () => {
                 </p>
               )}
             </div>
-            <div className='text-right flex flex-col items-end'>
+            <div className='flex flex-col justify-between items-end text-right min-h-[120px] ml-6'>
               <button
                 onClick={handleToggleLike}
-                className={`mb-2 p-2 rounded-full transition-colors ${
+                className={`p-2 rounded-full transition-colors ${
                   isLiked
                     ? 'bg-red-100 hover:bg-red-200'
                     : 'bg-gray-100 hover:bg-red-100'
@@ -153,11 +153,13 @@ const CookbookDetail = () => {
               >
                 <HeartIcon filled={isLiked} size={24} />
               </button>
-              <div className='text-2xl font-bold text-blue-500'>
-                {cookbook.recipes.length}
-              </div>
-              <div className='text-sm text-gray-600'>
-                {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
+              <div className='flex flex-col items-end text-right'>
+                <div className='text-2xl font-bold text-blue-500'>
+                  {cookbook.recipes.length}
+                </div>
+                <div className='text-sm text-gray-600'>
+                  {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
+                </div>
               </div>
             </div>
           </div>
