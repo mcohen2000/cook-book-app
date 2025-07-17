@@ -125,7 +125,7 @@ const CookbookDetail = () => {
       <div className='space-y-6'>
         {/* Cookbook Header */}
         <div className='bg-white shadow rounded-lg p-6'>
-          <div className='flex flex-row justify-between items-stretch mb-4'>
+          <div className='flex flex-row justify-between items-stretch'>
             <div className='flex-1'>
               <h1 className='text-3xl font-bold text-gray-900 mb-2'>
                 {cookbook.title}
