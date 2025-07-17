@@ -6,7 +6,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import DropdownMenu from './DropdownMenu';
 import UserAvatarIcon from './UserAvatarIcon';
 import PlusIcon from './icons/PlusIcon';
-import DownwardArrowIcon from './icons/DownwardArrowIcon';
 
 const Navbar = () => {
   const { user } = useContext(AuthContext) || {};
