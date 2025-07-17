@@ -17,31 +17,35 @@ const CookbookCard = ({ cookbook }: CookbookCardProps) => {
   return (
     <Link to={`/cookbooks/${cookbook._id}`} className='block'>
       <div className='bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200'>
-        <div className='p-6'>
-          <h3 className='text-lg font-medium text-gray-900 mb-2'>
-            {cookbook.title}
-          </h3>
-          {cookbook.description && (
-            <p className='text-gray-700 text-sm mb-2 line-clamp-2'>
-              {cookbook.description}
-            </p>
-          )}
-          <div className='flex items-center justify-between text-sm text-gray-500 mb-4'>
-            <div className='flex items-center'>
-              <BookIcon className='w-4 h-4 mr-1' />
-              {cookbook.recipes.length}{' '}
-              {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
-            </div>
-            <div className='flex items-center'>
-              <UserIcon className='w-4 h-4 mr-1' />
-              {authorName}
-            </div>
+        <div className='p-6 h-[200px] flex flex-col justify-between'>
+          <div>
+            <h3 className='text-lg font-medium text-gray-900 mb-2'>
+              {cookbook.title}
+            </h3>
+            {cookbook.description && (
+              <p className='text-gray-700 text-sm mb-2 line-clamp-2'>
+                {cookbook.description}
+              </p>
+            )}
           </div>
-          {cookbook.createdAt && (
-            <div className='text-xs text-gray-400'>
-              Created {new Date(cookbook.createdAt).toLocaleDateString()}
+          <div>
+            <div className='flex items-center justify-between text-sm text-gray-500 mb-2'>
+              <div className='flex items-center'>
+                <BookIcon className='w-4 h-4 mr-1' />
+                {cookbook.recipes.length}{' '}
+                {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
+              </div>
+              <div className='flex items-center'>
+                <UserIcon className='w-4 h-4 mr-1' />
+                {authorName}
+              </div>
             </div>
-          )}
+            {cookbook.createdAt && (
+              <div className='text-xs text-gray-400'>
+                Created {new Date(cookbook.createdAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Link>
