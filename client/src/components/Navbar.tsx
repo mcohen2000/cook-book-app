@@ -6,10 +6,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import DropdownMenu from './DropdownMenu';
 import UserAvatarIcon from './UserAvatarIcon';
 import PlusIcon from './icons/PlusIcon';
+import SideDrawer from './SideDrawer';
+import { useState } from 'react';
+import HamburgerIcon from './icons/HamburgerIcon';
 
 const Navbar = () => {
   const { user } = useContext(AuthContext) || {};
   const queryClient = useQueryClient();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Handler for logout that closes the dropdown and updates UI
   const handleLogoutWithClose =
@@ -27,12 +31,19 @@ const Navbar = () => {
     <header className='bg-white shadow'>
       <nav className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between h-16 items-center'>
-          {/* Left side - Logo and Navigation Links */}
           <div className='flex items-center space-x-8'>
+            <button
+              className='md:hidden mr-2 flex items-center justify-center w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+              aria-label='Open navigation menu'
+              onClick={() => setDrawerOpen(true)}
+            >
+              <HamburgerIcon className='w-6 h-6 text-gray-700' />
+            </button>
             <Link to='/'>
               <h1 className='text-2xl font-bold text-blue-500'>Cook Book</h1>
             </Link>
-            <div className='flex space-x-6'>
+            {/* Desktop nav links */}
+            <div className='hidden md:flex space-x-6'>
               <Link
                 to='/recipes'
                 className='text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium'
@@ -106,6 +117,8 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      {/* SideDrawer for mobile nav */}
+      <SideDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </header>
   );
 };
