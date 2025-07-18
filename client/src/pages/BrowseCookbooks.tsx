@@ -56,15 +56,18 @@ const BrowseCookbooks = () => {
           >
             Search
           </button>
-          {searchQuery && (
-            <button
-              type='button'
-              onClick={handleClearSearch}
-              className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors'
-            >
-              Clear
-            </button>
-          )}
+          <button
+            type='button'
+            onClick={handleClearSearch}
+            disabled={!searchQuery}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              searchQuery
+                ? 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            Clear
+          </button>
         </form>
       </div>
 
