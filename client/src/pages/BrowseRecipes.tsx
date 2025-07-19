@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import RecipeCard from '../components/RecipeCard';
+import SearchForm from '../components/SearchForm';
 import { useRecipes } from '../queries/useRecipes';
 
 interface Recipe {
@@ -15,13 +15,8 @@ interface Recipe {
 }
 
 export default function BrowsePage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
-  const [searchQuery, setSearchQuery] = useState(search);
-
-  useEffect(() => {
-    setSearchQuery(search);
-  }, [search]);
 
   const {
     data: recipes = [],
@@ -30,16 +25,6 @@ export default function BrowsePage() {
     isFetching,
   } = useRecipes(search);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSearchParams(searchQuery ? { search: searchQuery } : {});
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setSearchParams({});
-  };
-
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-center px-4'>
@@ -47,35 +32,7 @@ export default function BrowsePage() {
       </div>
 
       {/* Search Bar */}
-      <div className='px-4'>
-        <form onSubmit={handleSearch} className='flex gap-2'>
-          <input
-            type='text'
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder='Search recipes...'
-            className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-          />
-          <button
-            type='submit'
-            className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-          >
-            Search
-          </button>
-          <button
-            type='button'
-            onClick={handleClearSearch}
-            disabled={!searchQuery}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              searchQuery
-                ? 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            Clear
-          </button>
-        </form>
-      </div>
+      <SearchForm placeholder='Search recipes...' />
 
       {isLoading || isFetching ? (
         <div className='text-center py-8'>

@@ -27,7 +27,11 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose }) => {
         aria-label='Mobile Navigation Drawer'
       >
         <div className='flex flex-col h-full p-6'>
-          <h2 className='text-xl font-bold mb-8 text-blue-500'>Cook Book</h2>
+          <Link to='/' onClick={onClose}>
+            <h2 className='text-xl font-bold mb-8 text-blue-500 hover:text-blue-600 transition-colors'>
+              Cook Book
+            </h2>
+          </Link>
           <Link
             to='/recipes'
             className='mb-4 text-gray-700 hover:text-blue-600 text-lg font-medium'

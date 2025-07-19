@@ -93,6 +93,14 @@ export default function RecipeForm({
     setFormData({ ...formData, instructions: newInstructions });
   };
 
+  const isFormValid =
+    formData.title &&
+    formData.description &&
+    !formData.ingredients.some((ing) => !ing.name || !ing.amount) &&
+    !formData.instructions.some((inst) => !inst.trim()) &&
+    formData.cookingTime >= 1 &&
+    formData.servings >= 1;
+
   return (
     <>
       <div className='flex justify-between items-center mb-6'>
@@ -100,7 +108,7 @@ export default function RecipeForm({
         {!isEditing && (
           <button
             type='button'
-            className='ml-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 border border-blue-300'
+            className='ml-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 border border-blue-300 cursor-pointer'
             onClick={() =>
               openModal(<OcrExtractorModal onExtracted={handleAiExtracted} />)
             }
@@ -164,7 +172,7 @@ export default function RecipeForm({
               <button
                 type='button'
                 onClick={addIngredient}
-                className='inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200'
+                className='inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 cursor-pointer'
               >
                 + Add Ingredient
               </button>
@@ -220,7 +228,7 @@ export default function RecipeForm({
               <button
                 type='button'
                 onClick={addInstruction}
-                className='inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200'
+                className='inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 cursor-pointer'
               >
                 + Add Step
               </button>
@@ -252,7 +260,7 @@ export default function RecipeForm({
                     <button
                       type='button'
                       onClick={() => removeInstruction(index)}
-                      className='bg-red-500 hover:bg-red-600 text-white flex items-center justify-center w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400'
+                      className='bg-red-500 hover:bg-red-600 text-white flex items-center justify-center w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer'
                       aria-label='Remove instruction'
                     >
                       <TrashIcon color='white' />
@@ -311,7 +319,8 @@ export default function RecipeForm({
           <div className='flex justify-end space-x-4'>
             <button
               type='submit'
-              className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+              className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+              disabled={!isFormValid}
             >
               {isEditing ? 'Save Changes' : 'Create Recipe'}
             </button>
