@@ -40,7 +40,9 @@ const Navbar = () => {
               <HamburgerIcon className='w-6 h-6 text-gray-700' />
             </button>
             <Link to='/'>
-              <h1 className='text-2xl font-bold text-blue-500'>Cook Book</h1>
+              <h1 className='text-2xl font-bold text-blue-500 hover:text-blue-600 transition-colors'>
+                Cook Book
+              </h1>
             </Link>
             {/* Desktop nav links */}
             <div className='hidden md:flex space-x-6'>
