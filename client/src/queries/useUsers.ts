@@ -1,6 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateProfile } from '../services/userService';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  updateProfile,
+  getLikedContent,
   likeRecipe,
   unlikeRecipe,
   likeCookbook,
@@ -57,5 +58,12 @@ export const useUnlikeCookbook = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] });
     },
+  });
+};
+
+export const useLikedContent = () => {
+  return useQuery({
+    queryKey: ['likedContent'],
+    queryFn: getLikedContent,
   });
 };
