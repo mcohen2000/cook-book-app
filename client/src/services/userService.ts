@@ -109,3 +109,13 @@ export async function unlikeCookbook(cookbookId: string) {
   if (!response.ok) throw new Error(data.error || 'Error unliking cookbook');
   return data.likedCookbooks;
 }
+
+export async function getLikedContent() {
+  const response = await fetch(`${API_URL}/liked`, {
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!response.ok)
+    throw new Error(data.error || 'Error fetching liked content');
+  return data;
+}

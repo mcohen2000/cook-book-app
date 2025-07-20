@@ -2,8 +2,10 @@ import { useAuth } from '../hooks/useAuth';
 import ProfileForm from '../components/ProfileForm';
 import { useCookbooks } from '../queries/useBooks';
 import { useRecipes } from '../queries/useRecipes';
+import { useLikedContent } from '../queries/useUsers';
 import { Link } from 'react-router';
 import type { Recipe } from '../types/recipe';
+import type { Book } from '../types/book';
 import RecipeCard from '../components/RecipeCard';
 import CookbookCard from '../components/CookbookCard';
 
@@ -16,6 +18,8 @@ const Profile = () => {
     '',
     user?.id
   ) as { data: Recipe[]; isLoading: boolean };
+  const { data: likedContent, isLoading: loadingLikedContent } =
+    useLikedContent();
 
   const handleProfileUpdate = () => {
     // This callback can be used for any additional actions after profile update
@@ -111,6 +115,62 @@ const Profile = () => {
                 />
               </Link>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Liked Content Section */}
+      <div className='bg-white shadow rounded-lg p-6 max-w-4xl mx-auto'>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+          Liked Content
+        </h3>
+        {loadingLikedContent ? (
+          <p className='text-gray-500'>Loading liked content...</p>
+        ) : (
+          <div className='space-y-6'>
+            {/* Liked Recipes */}
+            <div>
+              <h4 className='text-md font-medium text-gray-800 mb-3'>
+                Liked Recipes
+              </h4>
+              {likedContent?.likedRecipes &&
+              likedContent.likedRecipes.length > 0 ? (
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  {likedContent.likedRecipes.map((recipe: Recipe) => (
+                    <Link key={recipe._id} to={`/recipes/${recipe._id}`}>
+                      <RecipeCard
+                        id={recipe._id}
+                        title={recipe.title}
+                        description={recipe.description}
+                        cookingTime={recipe.cookingTime}
+                        servings={recipe.servings}
+                      />
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className='text-gray-500'>No liked recipes yet.</p>
+              )}
+            </div>
+
+            {/* Liked Cookbooks */}
+            <div>
+              <h4 className='text-md font-medium text-gray-800 mb-3'>
+                Liked Cookbooks
+              </h4>
+              {likedContent?.likedCookbooks &&
+              likedContent.likedCookbooks.length > 0 ? (
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  {likedContent.likedCookbooks.map((cookbook: Book) => (
+                    <Link key={cookbook._id} to={`/cookbooks/${cookbook._id}`}>
+                      <CookbookCard cookbook={cookbook} />
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className='text-gray-500'>No liked cookbooks yet.</p>
+              )}
+            </div>
           </div>
         )}
       </div>
