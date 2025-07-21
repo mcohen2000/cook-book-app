@@ -11,7 +11,7 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose }) => {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-30 transition-opacity duration-300 z-40 ${
+        className={`fixed inset-0 bg-black/50 transition-opacity duration-300 z-40 ${
           open
             ? 'opacity-100 pointer-events-auto'
             : 'opacity-0 pointer-events-none'
