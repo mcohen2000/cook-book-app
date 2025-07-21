@@ -33,7 +33,7 @@ const Navbar = () => {
         <div className='flex justify-between h-16 items-center'>
           <div className='flex items-center space-x-8'>
             <button
-              className='md:hidden mr-2 flex items-center justify-center w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='md:hidden mr-2 flex items-center justify-center w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer'
               aria-label='Open navigation menu'
               onClick={() => setDrawerOpen(true)}
             >
