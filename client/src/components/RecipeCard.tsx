@@ -32,7 +32,7 @@ const RecipeCard = ({
             </div>
             <div className='flex items-center'>
               <ServingsIcon className='w-4 h-4 mr-1' />
-              {servings} servings
+              {servings} {servings === 1 ? 'serving' : 'servings'}
             </div>
           </div>
         </div>

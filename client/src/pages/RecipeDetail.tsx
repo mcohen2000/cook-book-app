@@ -191,7 +191,8 @@ export default function RecipeDetail() {
           <div className='mt-8 flex items-center justify-between text-sm text-gray-500'>
             <div className='flex items-center'>
               <ClockIcon className='w-5 h-5 mr-2' />
-              Cooking Time: {recipe.cookingTime} minutes
+              Cooking Time: {recipe.cookingTime}{' '}
+              {recipe.cookingTime === 1 ? 'minute' : 'minutes'}
             </div>
             <div className='flex items-center'>
               <ServingsIcon className='w-5 h-5 mr-2' />
