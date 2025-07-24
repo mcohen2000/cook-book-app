@@ -3,20 +3,36 @@ import type { Recipe } from '../types/recipe';
 const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api`;
 
 export const recipeService = {
-  getRecipes: async (search: string = '', userId?: string) => {
-    let url = `${API_URL}/recipes${
-      search ? `?search=${encodeURIComponent(search)}` : ''
-    }`;
-    if (userId) {
-      url += (search ? `&` : `?`) + `userId=${userId}`;
+  getRecipes: async <
+    T = {
+      recipes: Recipe[];
+      total: number;
+      page: number;
+      pageSize: number;
+      totalPages: number;
     }
+  >({
+    search = '',
+    userId,
+    page = 1,
+  }: {
+    search?: string;
+    userId?: string;
+    page?: number;
+  }): Promise<T> => {
+    let url = `${API_URL}/recipes?`;
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (userId) params.append('userId', userId);
+    params.append('page', page.toString());
+    url += params.toString();
     const response = await fetch(url, {
       credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
-    return response.json();
+    return response.json() as Promise<T>;
   },
 
   getRecipeById: async (id: string): Promise<Recipe> => {
