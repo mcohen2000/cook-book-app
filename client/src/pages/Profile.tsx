@@ -3,7 +3,6 @@ import ProfileForm from '../components/ProfileForm';
 import { useCookbooks } from '../queries/useBooks';
 import { useRecipes } from '../queries/useRecipes';
 import { useLikedContent } from '../queries/useUsers';
-import { Link } from 'react-router';
 import type { Recipe } from '../types/recipe';
 import type { Book } from '../types/book';
 import RecipeCard from '../components/RecipeCard';
@@ -14,10 +13,11 @@ const Profile = () => {
   const { data: cookbooks = [], isLoading: loadingCookbooks } = useCookbooks({
     userId: user?.id,
   });
-  const { data: recipes = [], isLoading: loadingRecipes } = useRecipes(
-    '',
-    user?.id
-  ) as { data: Recipe[]; isLoading: boolean };
+  const { data: recipesData, isLoading: loadingRecipes } = useRecipes({
+    search: '',
+    userId: user?.id,
+  });
+  const recipes = recipesData?.recipes ?? [];
   const { data: likedContent, isLoading: loadingLikedContent } =
     useLikedContent();
 
@@ -87,9 +87,7 @@ const Profile = () => {
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             {cookbooks.map((book) => (
-              <Link key={book._id} to={`/cookbooks/${book._id}`}>
-                <CookbookCard cookbook={book} />
-              </Link>
+              <CookbookCard key={book._id} cookbook={book} />
             ))}
           </div>
         )}
@@ -104,16 +102,15 @@ const Profile = () => {
           <p className='text-gray-500'>No recipes found.</p>
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {recipes.map((recipe: Recipe) => (
-              <Link key={recipe._id} to={`/recipes/${recipe._id}`}>
-                <RecipeCard
-                  id={recipe._id}
-                  title={recipe.title}
-                  description={recipe.description}
-                  cookingTime={recipe.cookingTime}
-                  servings={recipe.servings}
-                />
-              </Link>
+            {recipes.map((recipe) => (
+              <RecipeCard
+                key={recipe._id}
+                id={recipe._id}
+                title={recipe.title}
+                description={recipe.description}
+                cookingTime={recipe.cookingTime}
+                servings={recipe.servings}
+              />
             ))}
           </div>
         )}
@@ -137,15 +134,14 @@ const Profile = () => {
               likedContent.likedRecipes.length > 0 ? (
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                   {likedContent.likedRecipes.map((recipe: Recipe) => (
-                    <Link key={recipe._id} to={`/recipes/${recipe._id}`}>
-                      <RecipeCard
-                        id={recipe._id}
-                        title={recipe.title}
-                        description={recipe.description}
-                        cookingTime={recipe.cookingTime}
-                        servings={recipe.servings}
-                      />
-                    </Link>
+                    <RecipeCard
+                      key={recipe._id}
+                      id={recipe._id}
+                      title={recipe.title}
+                      description={recipe.description}
+                      cookingTime={recipe.cookingTime}
+                      servings={recipe.servings}
+                    />
                   ))}
                 </div>
               ) : (
@@ -162,9 +158,7 @@ const Profile = () => {
               likedContent.likedCookbooks.length > 0 ? (
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                   {likedContent.likedCookbooks.map((cookbook: Book) => (
-                    <Link key={cookbook._id} to={`/cookbooks/${cookbook._id}`}>
-                      <CookbookCard cookbook={cookbook} />
-                    </Link>
+                    <CookbookCard key={cookbook._id} cookbook={cookbook} />
                   ))}
                 </div>
               ) : (
