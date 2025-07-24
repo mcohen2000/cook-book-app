@@ -13,7 +13,9 @@ const getAllRecipes = async (
   next: NextFunction
 ) => {
   try {
-    const { search, userId } = req.query;
+    const { search, userId, page = '1' } = req.query;
+    const pageSize = 9;
+    const pageNumber = parseInt(page as string, 10) || 1;
 
     let query: any = {};
     if (search) {
@@ -29,8 +31,19 @@ const getAllRecipes = async (
       query = { ...query, author: userId };
     }
 
-    const recipes = await Recipe.find(query).sort({ createdAt: -1 });
-    res.json(recipes);
+    const total = await Recipe.countDocuments(query);
+    const recipes = await Recipe.find(query)
+      .sort({ createdAt: -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    res.json({
+      recipes,
+      total,
+      page: pageNumber,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    });
   } catch (error) {
     next(error);
   }

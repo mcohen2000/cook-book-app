@@ -2,10 +2,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recipeService } from '../services/recipeService';
 import type { Recipe } from '../types/recipe';
 
-export const useRecipes = (search: string = '', userId?: string) => {
+export const useRecipes = (options: {
+  search?: string;
+  userId?: string;
+  page?: number;
+}) => {
+  const { search = '', userId, page = 1 } = options || {};
   return useQuery({
-    queryKey: ['recipes', search, userId],
-    queryFn: () => recipeService.getRecipes(search, userId),
+    queryKey: ['recipes', search, userId, page],
+    queryFn: () => recipeService.getRecipes({ search, userId, page }),
   });
 };
 
