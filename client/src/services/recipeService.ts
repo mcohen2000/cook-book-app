@@ -15,16 +15,19 @@ export const recipeService = {
     search = '',
     userId,
     page = 1,
+    count,
   }: {
     search?: string;
     userId?: string;
     page?: number;
+    count?: number;
   }): Promise<T> => {
     let url = `${API_URL}/recipes?`;
     const params = new URLSearchParams();
     if (search) params.append('search', search);
     if (userId) params.append('userId', userId);
     params.append('page', page.toString());
+    if (count) params.append('count', count.toString());
     url += params.toString();
     const response = await fetch(url, {
       credentials: 'include',
