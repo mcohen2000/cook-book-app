@@ -3,6 +3,7 @@ import RecipeCard from '../components/RecipeCard';
 import SearchForm from '../components/SearchForm';
 import { useRecipes } from '../queries/useRecipes';
 import type { Recipe } from '../types/recipe';
+import PaginationControls from '../components/PaginationControls';
 
 export default function BrowsePage() {
   const [searchParams] = useSearchParams();
@@ -58,35 +59,11 @@ export default function BrowsePage() {
               />
             ))}
           </div>
-          {/* Pagination Controls */}
-          <div className='flex justify-center items-center gap-4 mt-8'>
-            <button
-              className={`px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm text-gray-700 font-medium transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 ${
-                currentPage <= 1 ? 'cursor-not-allowed' : 'cursor-pointer'
-              }`}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage <= 1}
-              aria-label='Previous page'
-            >
-              &larr; Previous
-            </button>
-            <span className='mx-2 text-gray-700 font-semibold text-lg select-none'>
-              Page {currentPage} <span className='text-gray-400'>/</span>{' '}
-              {totalPages}
-            </span>
-            <button
-              className={`px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm text-gray-700 font-medium transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 ${
-                currentPage >= totalPages
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer'
-              }`}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-              aria-label='Next page'
-            >
-              Next &rarr;
-            </button>
-          </div>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </>
       )}
     </div>

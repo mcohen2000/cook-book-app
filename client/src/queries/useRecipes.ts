@@ -6,11 +6,12 @@ export const useRecipes = (options: {
   search?: string;
   userId?: string;
   page?: number;
+  count?: number;
 }) => {
-  const { search = '', userId, page = 1 } = options || {};
+  const { search = '', userId, page = 1, count = 9 } = options || {};
   return useQuery({
-    queryKey: ['recipes', search, userId, page],
-    queryFn: () => recipeService.getRecipes({ search, userId, page }),
+    queryKey: ['recipes', { search, userId, page, count }],
+    queryFn: () => recipeService.getRecipes({ search, userId, page, count }),
   });
 };
 
