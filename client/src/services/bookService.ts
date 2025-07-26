@@ -3,13 +3,25 @@ import type { Book, BookModalItem } from '../types/book';
 const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api`;
 
 export const bookService = {
-  getCookbooks: async ({
+  getCookbooks: async <
+    T = {
+      books: Book[];
+      total: number;
+      page: number;
+      pageSize: number;
+      totalPages: number;
+    }
+  >({
     userId,
     search,
+    page,
+    count,
   }: {
     userId?: string;
     search?: string;
-  }): Promise<Book[]> => {
+    page?: number;
+    count?: number;
+  }): Promise<T> => {
     let url = `${API_URL}/books`;
     const params = new URLSearchParams();
     if (userId) {
@@ -17,6 +29,12 @@ export const bookService = {
     }
     if (search) {
       params.append('search', search);
+    }
+    if (page) {
+      params.append('page', page.toString());
+    }
+    if (count) {
+      params.append('count', count.toString());
     }
     if (params.toString()) {
       url += `?${params.toString()}`;

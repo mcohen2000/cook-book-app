@@ -2,16 +2,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bookService } from '../services/bookService';
 import type { Book, BookModalItem } from '../types/book';
 
-export const useCookbooks = ({
-  userId,
-  search,
-}: { userId?: string; search?: string } = {}) => {
-  const params: { userId?: string; search?: string } = {};
-  if (userId) params.userId = userId;
-  if (search) params.search = search;
-  return useQuery<Book[]>({
-    queryKey: ['cookbooks', params],
-    queryFn: () => bookService.getCookbooks(params),
+export const useCookbooks = (
+  options: {
+    userId?: string;
+    search?: string;
+    page?: number;
+    count?: number;
+  } = {}
+) => {
+  const { search = '', userId, page = 1, count = 9 } = options || {};
+  return useQuery({
+    queryKey: ['cookbooks', { search, userId, page, count }],
+    queryFn: () => bookService.getCookbooks({ search, userId, page, count }),
   });
 };
 
