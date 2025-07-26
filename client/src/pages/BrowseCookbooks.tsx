@@ -3,17 +3,18 @@ import { useCookbooks } from '../queries/useBooks';
 import CookbookCard from '../components/CookbookCard';
 import SearchForm from '../components/SearchForm';
 import type { Book } from '../types/book';
+import PaginationControls from '../components/PaginationControls';
 
 const BrowseCookbooks = () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
+  const page = parseInt(searchParams.get('page') || '1', 10);
 
-  const {
-    data: books = [],
-    isLoading,
-    error,
-    isFetching,
-  } = useCookbooks({ search });
+  const { data, isLoading, error, isFetching } = useCookbooks({ search, page });
+
+  const books: Book[] = data?.books ?? [];
+  const totalPages: number = data?.totalPages ?? 1;
+  const currentPage: number = data?.page ?? 1;
 
   return (
     <div className='space-y-6'>
@@ -21,7 +22,6 @@ const BrowseCookbooks = () => {
         <h2 className='text-2xl font-bold text-gray-900'>Cookbooks</h2>
       </div>
 
-      {/* Search Bar */}
       <SearchForm placeholder='Search cookbooks by title or description' />
 
       {isLoading || isFetching ? (
@@ -42,11 +42,17 @@ const BrowseCookbooks = () => {
           </p>
         </div>
       ) : (
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 px-4'>
-          {books.map((book: Book) => (
-            <CookbookCard key={book._id} cookbook={book} />
-          ))}
-        </div>
+        <>
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 px-4'>
+            {books.map((book: Book) => (
+              <CookbookCard key={book._id} cookbook={book} />
+            ))}
+          </div>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+        </>
       )}
     </div>
   );

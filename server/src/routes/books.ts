@@ -7,7 +7,7 @@ const router: Router = express.Router();
 // Get all cookbooks (optionally filter by userId and search)
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId, search } = req.query;
+    const { userId, search, page = '1', count = '9' } = req.query;
     let filter: any = {};
 
     if (userId) {
@@ -19,11 +19,24 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       filter.$or = [{ title: searchRegex }, { description: searchRegex }];
     }
 
+    const pageSize = count ? parseInt(count as string, 10) || 9 : 9;
+    const pageNumber = parseInt(page as string, 10) || 1;
+
+    const total = await Book.countDocuments(filter);
     const books = await Book.find(filter)
       .populate('recipes', 'title description cookingTime servings')
       .populate('author', 'name')
-      .sort({ createdAt: -1 });
-    res.json(books);
+      .sort({ createdAt: -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    res.json({
+      books,
+      total,
+      page: pageNumber,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    });
   } catch (error) {
     next(error);
   }
