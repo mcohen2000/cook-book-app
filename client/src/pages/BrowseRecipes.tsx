@@ -1,4 +1,4 @@
-import { useSearchParams, useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router';
 import RecipeCard from '../components/RecipeCard';
 import SearchForm from '../components/SearchForm';
 import { useRecipes } from '../queries/useRecipes';
@@ -7,7 +7,6 @@ import PaginationControls from '../components/PaginationControls';
 
 export default function BrowsePage() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const search = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
 
@@ -17,19 +16,12 @@ export default function BrowsePage() {
   const totalPages: number = data?.totalPages ?? 1;
   const currentPage: number = data?.page ?? 1;
 
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('page', newPage.toString());
-    navigate({ search: params.toString() });
-  };
-
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-center px-4'>
         <h2 className='text-2xl font-bold text-gray-900'>Recipes</h2>
       </div>
 
-      {/* Search Bar */}
       <SearchForm placeholder='Search recipes...' />
 
       {isLoading || isFetching ? (
@@ -62,7 +54,6 @@ export default function BrowsePage() {
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={handlePageChange}
           />
         </>
       )}
