@@ -10,7 +10,7 @@ export const useCookbooks = (
     count?: number;
   } = {}
 ) => {
-  const { search = '', userId, page = 1, count = 9 } = options || {};
+  const { search = '', userId, page = 1, count = 12 } = options || {};
   return useQuery({
     queryKey: ['cookbooks', { search, userId, page, count }],
     queryFn: () => bookService.getCookbooks({ search, userId, page, count }),

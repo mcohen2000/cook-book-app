@@ -19,7 +19,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       filter.$or = [{ title: searchRegex }, { description: searchRegex }];
     }
 
-    const pageSize = count ? parseInt(count as string, 10) || 9 : 9;
+    const pageSize = count ? parseInt(count as string, 10) || 12 : 12;
     const pageNumber = parseInt(page as string, 10) || 1;
 
     const total = await Book.countDocuments(filter);
