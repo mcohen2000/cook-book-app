@@ -3,10 +3,9 @@ import { useUpdateProfile } from '../queries/useUsers';
 
 interface ProfileFormProps {
   currentName: string;
-  onSuccess: () => void;
 }
 
-const ProfileForm = ({ currentName, onSuccess }: ProfileFormProps) => {
+const ProfileForm = ({ currentName }: ProfileFormProps) => {
   const updateProfile = useUpdateProfile();
   const [name, setName] = useState(currentName);
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +28,6 @@ const ProfileForm = ({ currentName, onSuccess }: ProfileFormProps) => {
       setSuccess('Profile updated successfully!');
       setError('');
       setIsEditing(false);
-      onSuccess();
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
