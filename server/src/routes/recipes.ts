@@ -14,7 +14,7 @@ const getAllRecipes = async (
 ) => {
   try {
     const { search, userId, page = '1', count } = req.query;
-    const pageSize = count ? parseInt(count as string, 10) || 9 : 9;
+    const pageSize = count ? parseInt(count as string, 10) || 12 : 12;
     const pageNumber = parseInt(page as string, 10) || 1;
 
     let query: any = {};
