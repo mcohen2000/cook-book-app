@@ -7,6 +7,13 @@ import type { Book } from '../types/book';
 import RecipeCard from '../components/RecipeCard';
 import CookbookCard from '../components/CookbookCard';
 import ProfileDisplay from '../components/ProfileDisplay';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '../components/Carousel';
 
 const Profile = () => {
   const { user } = useAuth();
@@ -21,6 +28,22 @@ const Profile = () => {
   const recipes = recipesData?.recipes ?? [];
   const { data: likedContent, isLoading: loadingLikedContent } =
     useLikedContent();
+
+  const handleCarouselItemSize = (arrLength: number) =>
+    arrLength >= 3
+      ? 'md:basis-1/2 lg:basis-1/3'
+      : arrLength === 2
+      ? 'md:basis-1/2'
+      : '';
+
+  const hideCarouselBtns = (arrLength: number) =>
+    arrLength === 3
+      ? 'flex lg:hidden'
+      : arrLength === 2
+      ? 'flex md:hidden'
+      : arrLength <= 1
+      ? 'hidden'
+      : '';
 
   if (!user) {
     return (
@@ -49,11 +72,21 @@ const Profile = () => {
         ) : cookbooks.length === 0 ? (
           <p className='text-gray-500'>No cookbooks found.</p>
         ) : (
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {cookbooks.map((book) => (
-              <CookbookCard key={book._id} cookbook={book} />
-            ))}
-          </div>
+          <Carousel className='w-full'>
+            <CarouselContent className='p-6'>
+              {cookbooks.map((book) => (
+                <CarouselItem
+                  className={`${handleCarouselItemSize(cookbooks.length)}`}
+                >
+                  <CookbookCard key={book._id} cookbook={book} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious
+              className={`${hideCarouselBtns(cookbooks.length)}`}
+            />
+            <CarouselNext className={`${hideCarouselBtns(cookbooks.length)}`} />
+          </Carousel>
         )}
       </div>
 
@@ -64,18 +97,28 @@ const Profile = () => {
         ) : recipes.length === 0 ? (
           <p className='text-gray-500'>No recipes found.</p>
         ) : (
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe._id}
-                id={recipe._id}
-                title={recipe.title}
-                description={recipe.description}
-                cookingTime={recipe.cookingTime}
-                servings={recipe.servings}
-              />
-            ))}
-          </div>
+          <Carousel className='w-full'>
+            <CarouselContent className='p-6'>
+              {recipes.map((recipe) => (
+                <CarouselItem
+                  className={`${handleCarouselItemSize(recipes.length)}`}
+                >
+                  <RecipeCard
+                    key={recipe._id}
+                    id={recipe._id}
+                    title={recipe.title}
+                    description={recipe.description}
+                    cookingTime={recipe.cookingTime}
+                    servings={recipe.servings}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious
+              className={`${hideCarouselBtns(recipes.length)}`}
+            />
+            <CarouselNext className={`${hideCarouselBtns(recipes.length)}`} />
+          </Carousel>
         )}
       </div>
 
@@ -93,18 +136,36 @@ const Profile = () => {
               </h4>
               {likedContent?.likedRecipes &&
               likedContent.likedRecipes.length > 0 ? (
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                  {likedContent.likedRecipes.map((recipe: Recipe) => (
-                    <RecipeCard
-                      key={recipe._id}
-                      id={recipe._id}
-                      title={recipe.title}
-                      description={recipe.description}
-                      cookingTime={recipe.cookingTime}
-                      servings={recipe.servings}
-                    />
-                  ))}
-                </div>
+                <Carousel className='w-full'>
+                  <CarouselContent className='p-6'>
+                    {likedContent.likedRecipes.map((recipe: Recipe) => (
+                      <CarouselItem
+                        className={`${handleCarouselItemSize(
+                          likedContent.likedRecipes.length
+                        )}`}
+                      >
+                        <RecipeCard
+                          key={recipe._id}
+                          id={recipe._id}
+                          title={recipe.title}
+                          description={recipe.description}
+                          cookingTime={recipe.cookingTime}
+                          servings={recipe.servings}
+                        />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious
+                    className={`${hideCarouselBtns(
+                      likedContent.likedRecipes.length
+                    )}`}
+                  />
+                  <CarouselNext
+                    className={`${hideCarouselBtns(
+                      likedContent.likedRecipes.length
+                    )}`}
+                  />
+                </Carousel>
               ) : (
                 <p className='text-gray-500'>No liked recipes yet.</p>
               )}
@@ -116,11 +177,30 @@ const Profile = () => {
               </h4>
               {likedContent?.likedCookbooks &&
               likedContent.likedCookbooks.length > 0 ? (
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                  {likedContent.likedCookbooks.map((cookbook: Book) => (
-                    <CookbookCard key={cookbook._id} cookbook={cookbook} />
-                  ))}
-                </div>
+                <Carousel className='w-full'>
+                  <CarouselContent className='p-6'>
+                    {likedContent.likedCookbooks.map((cookbook: Book) => (
+                      <CarouselItem
+                        className={`${handleCarouselItemSize(
+                          likedContent.likedCookbooks.length
+                        )}`}
+                      >
+                        <CookbookCard key={cookbook._id} cookbook={cookbook} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+
+                  <CarouselPrevious
+                    className={`${hideCarouselBtns(
+                      likedContent.likedCookbooks.length
+                    )}`}
+                  />
+                  <CarouselNext
+                    className={`${hideCarouselBtns(
+                      likedContent.likedCookbooks.length
+                    )}`}
+                  />
+                </Carousel>
               ) : (
                 <p className='text-gray-500'>No liked cookbooks yet.</p>
               )}
