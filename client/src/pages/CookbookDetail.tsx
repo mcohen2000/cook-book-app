@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 import { useCookbook } from '../queries/useBooks';
 import RecipeCard from '../components/RecipeCard';
 import type { Recipe } from '../types/book';
@@ -91,7 +91,13 @@ const CookbookDetail = () => {
     );
   };
 
-  const backTo: { to: string; text: string } = {
+  const location = useLocation();
+  const backTo = location.state?.backTo || {
+    to: '/cookbooks',
+    text: 'Back to Cookbooks',
+  };
+
+  const returnTo: { to: string; text: string } = {
     to: `/cookbooks/${id}`,
     text: 'Back to Cookbook',
   };
@@ -105,7 +111,7 @@ const CookbookDetail = () => {
   return (
     <>
       <div className='flex justify-between items-center mb-6'>
-        <BackButton to='/cookbooks' text='Back to Cookbooks' />
+        <BackButton to={backTo.to} text={backTo.text} />
         <div className='space-x-4'>
           {isAuthor && (
             <>
@@ -190,7 +196,7 @@ const CookbookDetail = () => {
                   description={recipe.description}
                   cookingTime={recipe.cookingTime}
                   servings={recipe.servings}
-                  backTo={backTo}
+                  backTo={returnTo}
                 />
               ))}
             </div>
