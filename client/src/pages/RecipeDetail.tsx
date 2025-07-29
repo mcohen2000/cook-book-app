@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from 'react-router';
+import { useParams, Link, useNavigate, useLocation } from 'react-router';
 import NutritionLabel from '../components/NutritionLabel';
 import { useRecipe, useDeleteRecipe } from '../queries/useRecipes';
 import BackButton from '../components/BackButton';
@@ -18,6 +18,11 @@ import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const backTo = location.state?.backTo || {
+    to: '/recipes',
+    text: 'Back to Recipes',
+  };
   const { data: recipe, isLoading, error } = useRecipe(id!);
   const deleteRecipe = useDeleteRecipe();
   const { user: currentUser, isLoading: authLoading } = useAuth();
@@ -95,7 +100,7 @@ export default function RecipeDetail() {
   return (
     <>
       <div className='flex justify-between items-center mb-6'>
-        <BackButton to='/recipes' text='Back to Recipes' />
+        <BackButton to={backTo.to} text={backTo.text} />
         <div className='space-x-4'>
           {isAuthor && (
             <>

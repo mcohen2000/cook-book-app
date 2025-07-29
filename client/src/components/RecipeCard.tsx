@@ -8,6 +8,7 @@ interface RecipeCardProps {
   description: string;
   cookingTime: number;
   servings: number;
+  backTo?: { to: string; text: string };
 }
 
 const RecipeCard = ({
@@ -16,9 +17,10 @@ const RecipeCard = ({
   description,
   cookingTime,
   servings,
+  backTo,
 }: RecipeCardProps) => {
   return (
-    <Link to={`/recipes/${id}`} className='block'>
+    <Link to={`/recipes/${id}`} state={{ backTo }} className='block'>
       <div className='bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200'>
         <div className='p-6 h-[200px] flex flex-col justify-between'>
           <div>

@@ -91,6 +91,11 @@ const CookbookDetail = () => {
     );
   };
 
+  const backTo: { to: string; text: string } = {
+    to: `/cookbooks/${id}`,
+    text: 'Back to Cookbook',
+  };
+
   // Get author name (could be string or User object)
   const authorName =
     typeof cookbook.author === 'string'
@@ -185,6 +190,7 @@ const CookbookDetail = () => {
                   description={recipe.description}
                   cookingTime={recipe.cookingTime}
                   servings={recipe.servings}
+                  backTo={backTo}
                 />
               ))}
             </div>
