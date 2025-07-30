@@ -5,9 +5,10 @@ import UserIcon from './icons/UserIcon';
 
 interface CookbookCardProps {
   cookbook: Book;
+  backTo?: { to: string; text: string };
 }
 
-const CookbookCard = ({ cookbook }: CookbookCardProps) => {
+const CookbookCard = ({ cookbook, backTo }: CookbookCardProps) => {
   // Get author name (could be string or User object)
   const authorName =
     typeof cookbook.author === 'string'
@@ -15,7 +16,11 @@ const CookbookCard = ({ cookbook }: CookbookCardProps) => {
       : cookbook.author.name;
 
   return (
-    <Link to={`/cookbooks/${cookbook._id}`} className='block'>
+    <Link
+      to={`/cookbooks/${cookbook._id}`}
+      className='block'
+      state={{ backTo }}
+    >
       <div className='bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200'>
         <div className='p-6 h-[200px] flex flex-col justify-between'>
           <div>
