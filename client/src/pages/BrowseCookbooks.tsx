@@ -45,7 +45,7 @@ const BrowseCookbooks = () => {
         <>
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 px-4'>
             {books.map((book: Book) => (
-              <CookbookCard key={book._id} cookbook={book} />
+              <CookbookCard key={book._id} book={book} />
             ))}
           </div>
           <PaginationControls

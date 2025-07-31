@@ -4,32 +4,26 @@ import BookIcon from './icons/BookIcon';
 import UserIcon from './icons/UserIcon';
 
 interface CookbookCardProps {
-  cookbook: Book;
+  book: Book;
   backTo?: { to: string; text: string };
 }
 
-const CookbookCard = ({ cookbook, backTo }: CookbookCardProps) => {
+const CookbookCard = ({ book, backTo }: CookbookCardProps) => {
   // Get author name (could be string or User object)
   const authorName =
-    typeof cookbook.author === 'string'
-      ? cookbook.author
-      : cookbook.author.name;
+    typeof book.author === 'string' ? book.author : book.author.name;
 
   return (
-    <Link
-      to={`/cookbooks/${cookbook._id}`}
-      className='block'
-      state={{ backTo }}
-    >
+    <Link to={`/cookbooks/${book._id}`} className='block' state={{ backTo }}>
       <div className='bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200'>
         <div className='p-6 h-[200px] flex flex-col justify-between'>
           <div>
             <h3 className='text-lg font-medium text-gray-900 mb-2'>
-              {cookbook.title}
+              {book.title}
             </h3>
-            {cookbook.description && (
+            {book.description && (
               <p className='text-gray-700 text-sm mb-2 line-clamp-2'>
-                {cookbook.description}
+                {book.description}
               </p>
             )}
           </div>
@@ -37,17 +31,17 @@ const CookbookCard = ({ cookbook, backTo }: CookbookCardProps) => {
             <div className='flex items-center justify-between text-sm text-gray-500 mb-2'>
               <div className='flex items-center'>
                 <BookIcon className='w-4 h-4 mr-1' />
-                {cookbook.recipes.length}{' '}
-                {cookbook.recipes.length === 1 ? 'recipe' : 'recipes'}
+                {book.recipes.length}{' '}
+                {book.recipes.length === 1 ? 'recipe' : 'recipes'}
               </div>
               <div className='flex items-center'>
                 <UserIcon className='w-4 h-4 mr-1' />
                 {authorName}
               </div>
             </div>
-            {cookbook.createdAt && (
+            {book.createdAt && (
               <div className='text-xs text-gray-400'>
-                Created {new Date(cookbook.createdAt).toLocaleDateString()}
+                Created {new Date(book.createdAt).toLocaleDateString()}
               </div>
             )}
           </div>
