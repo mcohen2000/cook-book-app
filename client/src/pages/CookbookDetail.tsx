@@ -191,11 +191,7 @@ const CookbookDetail = () => {
               {cookbook.recipes.map((recipe: Recipe) => (
                 <RecipeCard
                   key={recipe._id}
-                  id={recipe._id}
-                  title={recipe.title}
-                  description={recipe.description}
-                  cookingTime={recipe.cookingTime}
-                  servings={recipe.servings}
+                  recipe={recipe}
                   backTo={returnTo}
                 />
               ))}

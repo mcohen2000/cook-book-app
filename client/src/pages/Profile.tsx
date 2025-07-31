@@ -14,18 +14,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '../components/Carousel';
+import PaginatedCarousel from '../components/PaginatedCarousel';
 
 const Profile = () => {
   const { user } = useAuth();
-  const { data: cookbooksData, isLoading: loadingCookbooks } = useCookbooks({
-    userId: user?.id,
-  });
-  const cookbooks = cookbooksData?.books ?? [];
-  const { data: recipesData, isLoading: loadingRecipes } = useRecipes({
-    search: '',
-    userId: user?.id,
-  });
-  const recipes = recipesData?.recipes ?? [];
+
   const { data: likedContent, isLoading: loadingLikedContent } =
     useLikedContent();
 
@@ -44,6 +37,8 @@ const Profile = () => {
       : arrLength <= 1
       ? 'hidden'
       : '';
+
+  const returnTo = { to: '/profile', text: 'Back to Profile' };
 
   if (!user) {
     return (
@@ -67,59 +62,28 @@ const Profile = () => {
         <h3 className='text-lg font-medium text-gray-900 mb-4'>
           Your Cookbooks
         </h3>
-        {loadingCookbooks ? (
-          <p className='text-gray-500'>Loading cookbooks...</p>
-        ) : cookbooks.length === 0 ? (
-          <p className='text-gray-500'>No cookbooks found.</p>
-        ) : (
-          <Carousel className='w-full'>
-            <CarouselContent className='p-6'>
-              {cookbooks.map((book) => (
-                <CarouselItem
-                  className={`${handleCarouselItemSize(cookbooks.length)}`}
-                >
-                  <CookbookCard key={book._id} cookbook={book} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious
-              className={`${hideCarouselBtns(cookbooks.length)}`}
-            />
-            <CarouselNext className={`${hideCarouselBtns(cookbooks.length)}`} />
-          </Carousel>
-        )}
+        <PaginatedCarousel
+          useQuery={useCookbooks}
+          userId={user?.id}
+          Card={CookbookCard}
+          cardProps={{ type: 'book', returnTo }}
+          preloadOffset={3}
+          itemSize={handleCarouselItemSize}
+          hideBtns={hideCarouselBtns}
+        />
       </div>
 
       <div className='bg-white shadow rounded-lg p-6 max-w-4xl mx-auto'>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>Your Recipes</h3>
-        {loadingRecipes ? (
-          <p className='text-gray-500'>Loading recipes...</p>
-        ) : recipes.length === 0 ? (
-          <p className='text-gray-500'>No recipes found.</p>
-        ) : (
-          <Carousel className='w-full'>
-            <CarouselContent className='p-6'>
-              {recipes.map((recipe) => (
-                <CarouselItem
-                  className={`${handleCarouselItemSize(recipes.length)}`}
-                >
-                  <RecipeCard
-                    key={recipe._id}
-                    id={recipe._id}
-                    title={recipe.title}
-                    description={recipe.description}
-                    cookingTime={recipe.cookingTime}
-                    servings={recipe.servings}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious
-              className={`${hideCarouselBtns(recipes.length)}`}
-            />
-            <CarouselNext className={`${hideCarouselBtns(recipes.length)}`} />
-          </Carousel>
-        )}
+        <PaginatedCarousel
+          useQuery={useRecipes}
+          userId={user?.id}
+          Card={RecipeCard}
+          cardProps={{ type: 'recipe', returnTo }}
+          preloadOffset={3}
+          itemSize={handleCarouselItemSize}
+          hideBtns={hideCarouselBtns}
+        />
       </div>
 
       <div className='bg-white shadow rounded-lg p-6 max-w-4xl mx-auto'>
@@ -140,18 +104,12 @@ const Profile = () => {
                   <CarouselContent className='p-6'>
                     {likedContent.likedRecipes.map((recipe: Recipe) => (
                       <CarouselItem
+                        key={`likedRecipe-${recipe._id}`}
                         className={`${handleCarouselItemSize(
                           likedContent.likedRecipes.length
                         )}`}
                       >
-                        <RecipeCard
-                          key={recipe._id}
-                          id={recipe._id}
-                          title={recipe.title}
-                          description={recipe.description}
-                          cookingTime={recipe.cookingTime}
-                          servings={recipe.servings}
-                        />
+                        <RecipeCard recipe={recipe} />
                       </CarouselItem>
                     ))}
                   </CarouselContent>
@@ -181,11 +139,12 @@ const Profile = () => {
                   <CarouselContent className='p-6'>
                     {likedContent.likedCookbooks.map((cookbook: Book) => (
                       <CarouselItem
+                        key={`likedBook-${cookbook._id}`}
                         className={`${handleCarouselItemSize(
                           likedContent.likedCookbooks.length
                         )}`}
                       >
-                        <CookbookCard key={cookbook._id} cookbook={cookbook} />
+                        <CookbookCard book={cookbook} />
                       </CarouselItem>
                     ))}
                   </CarouselContent>
