@@ -1,24 +1,15 @@
 import { Link } from 'react-router';
 import ClockIcon from './icons/ClockIcon';
 import ServingsIcon from './icons/ServingsIcon';
+import type { Recipe } from '../types/recipe';
 
 interface RecipeCardProps {
-  id: string;
-  title: string;
-  description: string;
-  cookingTime: number;
-  servings: number;
+  recipe: Omit<Recipe, 'ingredients' | 'instructions'>;
   backTo?: { to: string; text: string };
 }
 
-const RecipeCard = ({
-  id,
-  title,
-  description,
-  cookingTime,
-  servings,
-  backTo,
-}: RecipeCardProps) => {
+const RecipeCard = ({ recipe, backTo }: RecipeCardProps) => {
+  const { _id: id, title, description, cookingTime, servings } = recipe;
   return (
     <Link to={`/recipes/${id}`} state={{ backTo }} className='block'>
       <div className='bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200'>
