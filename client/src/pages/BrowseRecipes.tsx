@@ -41,14 +41,7 @@ export default function BrowsePage() {
         <>
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 px-4'>
             {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe._id}
-                id={recipe._id}
-                title={recipe.title}
-                description={recipe.description}
-                cookingTime={recipe.cookingTime}
-                servings={recipe.servings}
-              />
+              <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
           <PaginationControls

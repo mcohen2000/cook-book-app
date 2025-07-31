@@ -15,6 +15,7 @@ type CarouselProps = {
   plugins?: CarouselPlugin;
   orientation?: 'horizontal' | 'vertical';
   setApi?: (api: CarouselApi) => void;
+  setIndex?: (index: number) => void;
 };
 
 type CarouselContextProps = {
@@ -45,6 +46,7 @@ function Carousel({
   plugins,
   className,
   children,
+  setIndex,
   ...props
 }: React.ComponentProps<'div'> & CarouselProps) {
   const [carouselRef, api] = useEmblaCarousel(
@@ -59,6 +61,7 @@ function Carousel({
 
   const onSelect = React.useCallback((api: CarouselApi) => {
     if (!api) return;
+    setIndex && setIndex(api.selectedScrollSnap());
     setCanScrollPrev(api.canScrollPrev());
     setCanScrollNext(api.canScrollNext());
   }, []);
@@ -96,7 +99,8 @@ function Carousel({
     api.on('select', onSelect);
 
     return () => {
-      api?.off('select', onSelect);
+      api.off('reInit', onSelect);
+      api.off('select', onSelect);
     };
   }, [api, onSelect]);
 
