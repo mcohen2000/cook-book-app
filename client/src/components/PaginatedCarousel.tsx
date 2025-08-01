@@ -52,12 +52,7 @@ function PaginatedCarousel({
           hasLoadedInitialData.current = true;
           return queryData[`${type}s`];
         }
-        // Only add new recipes
-        const newIds = new Set(prev.map((r) => r._id));
-        return [
-          ...prev,
-          ...queryData[`${type}s`].filter((r: any) => !newIds.has(r._id)),
-        ];
+        return [...prev, ...queryData[`${type}s`]];
       });
       if (queryData[`${type}s`].length < count) setHasMore(false);
       else {
@@ -93,11 +88,8 @@ function PaginatedCarousel({
   ) : (
     <Carousel className={`w-full`} setIndex={setCurrentIndex}>
       <CarouselContent className='p-6'>
-        {items.map((item, idx) => (
-          <CarouselItem
-            key={item._id || idx}
-            className={itemSize(items.length)}
-          >
+        {items.map((item) => (
+          <CarouselItem key={item._id} className={itemSize(items.length)}>
             <Card {...{ [type]: item, backTo: returnTo }} />
           </CarouselItem>
         ))}
