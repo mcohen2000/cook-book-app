@@ -67,7 +67,7 @@ const Profile = () => {
           userId={user?.id}
           Card={CookbookCard}
           cardProps={{ type: 'book', returnTo }}
-          preloadOffset={3}
+          preloadOffset={4}
           itemSize={handleCarouselItemSize}
           hideBtns={hideCarouselBtns}
         />
@@ -80,7 +80,7 @@ const Profile = () => {
           userId={user?.id}
           Card={RecipeCard}
           cardProps={{ type: 'recipe', returnTo }}
-          preloadOffset={3}
+          preloadOffset={4}
           itemSize={handleCarouselItemSize}
           hideBtns={hideCarouselBtns}
         />
