@@ -46,21 +46,22 @@ function PaginatedCarousel({
 
   useEffect(() => {
     if (queryData && queryData[`${type}s`]) {
+      const newItemsLength = queryData[`${type}s`].length;
+
       setItems((prev) => {
-        // Avoid duplicates if page is reset
         if (page === 1) {
           hasLoadedInitialData.current = true;
           return queryData[`${type}s`];
         }
         return [...prev, ...queryData[`${type}s`]];
       });
-      if (queryData[`${type}s`].length < count) setHasMore(false);
-      else {
-        setHasMore(true);
-      }
+
+      if (newItemsLength < count) setHasMore(false);
+      else setHasMore(true);
+
       setLoadingNextPage(false);
     }
-  }, [queryData, page]);
+  }, [queryData, page, type]);
 
   const loadMore = () => {
     if (!hasMore || loadingQuery || fetchingQuery || loadingNextPage) return;
@@ -81,7 +82,7 @@ function PaginatedCarousel({
     }
   }, [currentIndex, items.length, queryData?.total]);
 
-  return loadingQuery ? (
+  return !items.length && loadingQuery ? (
     <p className='text-gray-500'>Loading {`${type}s`}...</p>
   ) : items.length === 0 ? (
     <p className='text-gray-500'>No {`${type}s`} found.</p>
@@ -89,18 +90,16 @@ function PaginatedCarousel({
     <Carousel className={`w-full`} setIndex={setCurrentIndex}>
       <CarouselContent className='p-6'>
         {items.map((item) => (
-          <CarouselItem key={item._id} className={itemSize(items.length)}>
+          <CarouselItem
+            key={`carousel-${type}-${item._id}`}
+            className={itemSize(items.length)}
+          >
             <Card {...{ [type]: item, backTo: returnTo }} />
           </CarouselItem>
         ))}
       </CarouselContent>
       <CarouselPrevious className={hideBtns(items.length)} />
       <CarouselNext className={hideBtns(items.length)} />
-      {!items.length && loadingQuery && (
-        <div className='absolute bottom-2 left-1/2 -translate-x-1/2 text-gray-500 text-sm'>
-          Loading...
-        </div>
-      )}
     </Carousel>
   );
 }
