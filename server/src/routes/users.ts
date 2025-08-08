@@ -248,9 +248,16 @@ router.post(
 // Get user's liked recipes and cookbooks
 router.get('/liked', auth, async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.user._id).populate(
-      'likedRecipes likedCookbooks'
-    );
+    const user = await User.findById(req.user._id).populate([
+      {
+        path: 'likedRecipes',
+        populate: { path: 'author', select: '_id name' },
+      },
+      {
+        path: 'likedCookbooks',
+        populate: { path: 'author', select: '_id name' },
+      },
+    ]);
 
     if (!user) {
       res.status(404).json({ error: 'User not found' });
