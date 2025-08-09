@@ -9,6 +9,7 @@ import {
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { Recipe } from '../types/recipe';
 import type { Book } from '../types/book';
+import LoadingSpinner from './LoadingSpinner';
 
 interface PaginatedCarouselProps {
   userId?: string;
@@ -106,7 +107,10 @@ function PaginatedCarousel({
   }, [currentIndex, queryData?.total]);
 
   return !items.length && loadingQuery ? (
-    <p className='text-gray-500'>Loading {`${type}s`}...</p>
+    <div className='flex flex-col justify-center items-center w-full'>
+      <LoadingSpinner size={12} />
+      <p className='mt-4 text-gray-500'>Loading {`${type}s`}...</p>
+    </div>
   ) : items.length === 0 ? (
     <p className='text-gray-500'>No {`${type}s`} found.</p>
   ) : (

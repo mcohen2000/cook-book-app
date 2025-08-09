@@ -4,6 +4,7 @@ import SearchForm from '../components/SearchForm';
 import { useRecipes } from '../queries/useRecipes';
 import type { Recipe } from '../types/recipe';
 import PaginationControls from '../components/PaginationControls';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function BrowsePage() {
   const [searchParams] = useSearchParams();
@@ -25,9 +26,9 @@ export default function BrowsePage() {
       <SearchForm placeholder='Search recipes...' />
 
       {isLoading || isFetching ? (
-        <div className='text-center py-8'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-          <p className='mt-2 text-gray-600'>Loading recipes...</p>
+        <div className='flex flex-col justify-center items-center text-center py-8'>
+          <LoadingSpinner size={24} />
+          <p className='mt-4 text-gray-600'>Loading recipes...</p>
         </div>
       ) : error ? (
         <div className='text-center py-8'>

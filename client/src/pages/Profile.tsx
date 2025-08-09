@@ -15,6 +15,7 @@ import {
   CarouselPrevious,
 } from '../components/Carousel';
 import PaginatedCarousel from '../components/PaginatedCarousel';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Profile = () => {
   const { user } = useAuth();
@@ -91,7 +92,10 @@ const Profile = () => {
           Liked Content
         </h3>
         {loadingLikedContent ? (
-          <p className='text-gray-500'>Loading liked content...</p>
+          <div className='flex flex-col justify-center items-center text-center py-8'>
+            <LoadingSpinner size={12} />
+            <p className='text-gray-500'>Loading liked content...</p>
+          </div>
         ) : (
           <div className='space-y-6'>
             <div>

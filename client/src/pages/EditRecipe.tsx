@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import RecipeForm from '../components/RecipeForm';
 import { useRecipe, useUpdateRecipe } from '../queries/useRecipes';
 import type { Recipe } from '../types/recipe';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function EditRecipe() {
   const { id } = useParams<{ id: string }>();
@@ -20,9 +21,9 @@ export default function EditRecipe() {
 
   if (isLoading) {
     return (
-      <div className='text-center py-8'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-        <p className='mt-2 text-gray-600'>Loading recipe...</p>
+      <div className='flex flex-col justify-center items-center text-center py-8'>
+        <LoadingSpinner size={24} />
+        <p className='mt-4 text-gray-600'>Loading recipe...</p>
       </div>
     );
   }

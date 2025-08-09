@@ -4,6 +4,7 @@ import CookbookCard from '../components/CookbookCard';
 import SearchForm from '../components/SearchForm';
 import type { Book } from '../types/book';
 import PaginationControls from '../components/PaginationControls';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const BrowseCookbooks = () => {
   const [searchParams] = useSearchParams();
@@ -25,9 +26,9 @@ const BrowseCookbooks = () => {
       <SearchForm placeholder='Search cookbooks by title or description' />
 
       {isLoading || isFetching ? (
-        <div className='text-center py-8'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-          <p className='mt-2 text-gray-600'>Loading cookbooks...</p>
+        <div className='flex flex-col justify-center items-center text-center py-8'>
+          <LoadingSpinner size={24} />
+          <p className='mt-4 text-gray-600'>Loading cookbooks...</p>
         </div>
       ) : error ? (
         <div className='text-center py-8'>

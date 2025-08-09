@@ -12,6 +12,7 @@ import TrashIcon from '../components/icons/TrashIcon';
 import EditIcon from '../components/icons/EditIcon';
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
 import { useModal } from '../context/ModalContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const CookbookDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,9 +31,9 @@ const CookbookDetail = () => {
   if (cookbookLoading) {
     return (
       <div className='space-y-6'>
-        <div className='text-center py-8'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-          <p className='mt-2 text-gray-600'>Loading cookbook...</p>
+        <div className='flex flex-col justify-center items-center text-center py-8'>
+          <LoadingSpinner size={24} />
+          <p className='mt-4 text-gray-600'>Loading cookbook...</p>
         </div>
       </div>
     );

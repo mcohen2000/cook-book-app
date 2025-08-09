@@ -22,7 +22,7 @@ const HomePage = () => {
 
   return (
     <div className='space-y-12'>
-      <section className='text-center py-20 bg-gray-50 rounded-lg'>
+      <section className='text-center py-20 bg-gray-50 rounded-lg px-4'>
         <h1 className='text-5xl font-bold text-gray-900 mb-4'>
           Welcome to The Cook Book
         </h1>
@@ -39,7 +39,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section>
+      <section className='px-4'>
         <h2 className='text-3xl font-bold text-gray-900 mb-6'>
           Featured Recipes
         </h2>
@@ -65,7 +65,7 @@ const HomePage = () => {
         )}
       </section>
 
-      <section>
+      <section className='px-4'>
         <h2 className='text-3xl font-bold text-gray-900 mb-6'>
           Featured Cookbooks
         </h2>
@@ -91,7 +91,7 @@ const HomePage = () => {
         )}
       </section>
 
-      <section className='text-center py-16 bg-blue-50 rounded-lg'>
+      <section className='text-center py-16 bg-blue-50 rounded-lg px-4'>
         <h2 className='text-3xl font-bold text-gray-900 mb-4'>
           Share Your Own Recipes
         </h2>
