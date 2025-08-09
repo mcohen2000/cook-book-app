@@ -4,6 +4,7 @@ import { useOcrRecipe } from '../queries/useRecipes';
 import UploadIcon from './icons/UploadIcon';
 import PlusIcon from './icons/PlusIcon';
 import type { Recipe } from '../types/recipe';
+import LoadingSpinner from './LoadingSpinner';
 
 interface OcrExtractorProps {
   onExtracted: (recipe: Recipe) => void;
@@ -98,8 +99,8 @@ export default function OcrExtractor({
 
       {ocrLoading && (
         <div className='flex items-center justify-center py-4'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3'></div>
-          <span className='text-blue-600 font-medium'>
+          <LoadingSpinner size={8} />
+          <span className='ml-4 text-blue-600 font-medium'>
             Extracting text from image...
           </span>
         </div>
@@ -107,8 +108,8 @@ export default function OcrExtractor({
 
       {aiLoading && (
         <div className='flex items-center justify-center py-4'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mr-3'></div>
-          <span className='text-green-600 font-medium'>
+          <LoadingSpinner size={8} color='green' />
+          <span className='ml-4 text-green-600 font-medium'>
             Organizing recipe with AI...
           </span>
         </div>

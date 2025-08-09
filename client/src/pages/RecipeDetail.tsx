@@ -14,6 +14,7 @@ import EditIcon from '../components/icons/EditIcon';
 import ClockIcon from '../components/icons/ClockIcon';
 import ServingsIcon from '../components/icons/ServingsIcon';
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -34,9 +35,9 @@ export default function RecipeDetail() {
   // Show loading state while auth or recipe data is loading
   if (authLoading || isLoading) {
     return (
-      <div className='text-center py-8'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-        <p className='mt-2 text-gray-600'>Loading...</p>
+      <div className='flex flex-col justify-center items-center text-center py-8'>
+        <LoadingSpinner size={24} />
+        <p className='mt-4 text-gray-600'>Loading...</p>
       </div>
     );
   }

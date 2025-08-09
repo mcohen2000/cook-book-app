@@ -4,6 +4,7 @@ import { useCookbook, useUpdateCookbook } from '../queries/useBooks';
 import { useAuth } from '../hooks/useAuth';
 import { isAuthor as checkIsAuthor } from '../utils/isAuthor';
 import CookbookForm from '../components/CookbookForm';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function EditCookbook() {
   const { id } = useParams<{ id: string }>();
@@ -36,9 +37,9 @@ export default function EditCookbook() {
   // Show loading state
   if (authLoading || isLoading) {
     return (
-      <div className='text-center py-8'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-        <p className='mt-2 text-gray-600'>Loading...</p>
+      <div className='flex flex-col justify-center items-center text-center py-8'>
+        <LoadingSpinner size={24} />
+        <p className='mt-4 text-gray-600'>Loading...</p>
       </div>
     );
   }
