@@ -16,6 +16,8 @@ import Login from './pages/Login';
 import { AuthProvider } from './context/AuthProvider';
 import { ModalProvider } from './context/ModalContext';
 import EditCookbook from './pages/EditCookbook';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import PublicOnlyRoute from './components/auth/PublicOnlyRoute';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,18 +41,33 @@ function App() {
           <Router>
             <Routes>
               <Route element={<MainLayout />}>
+                {/* Public Routes */}
                 <Route path='/' element={<HomePage />} />
-                <Route path='/register' element={<Register />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/profile' element={<Profile />} />
                 <Route path='/recipes' element={<BrowsePage />} />
                 <Route path='/cookbooks' element={<BrowseCookbooks />} />
-                <Route path='/cookbooks/create' element={<CreateCookbook />} />
-                <Route path='/cookbooks/:id' element={<CookbookDetail />} />
-                <Route path='/cookbooks/:id/edit' element={<EditCookbook />} />
-                <Route path='/recipes/create' element={<CreateRecipe />} />
                 <Route path='/recipes/:id' element={<RecipeDetail />} />
-                <Route path='/recipes/:id/edit' element={<EditRecipe />} />
+                <Route path='/cookbooks/:id' element={<CookbookDetail />} />
+
+                {/* Routes for logged out users only */}
+                <Route element={<PublicOnlyRoute />}>
+                  <Route path='/register' element={<Register />} />
+                  <Route path='/login' element={<Login />} />
+                </Route>
+
+                {/* Protected Routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path='/profile' element={<Profile />} />
+                  <Route
+                    path='/cookbooks/create'
+                    element={<CreateCookbook />}
+                  />
+                  <Route
+                    path='/cookbooks/:id/edit'
+                    element={<EditCookbook />}
+                  />
+                  <Route path='/recipes/create' element={<CreateRecipe />} />
+                  <Route path='/recipes/:id/edit' element={<EditRecipe />} />
+                </Route>
               </Route>
             </Routes>
           </Router>
