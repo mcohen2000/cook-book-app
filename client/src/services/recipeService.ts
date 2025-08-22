@@ -89,13 +89,16 @@ export const recipeService = {
     }
   },
 
-  ocrRecipe: async (text: string): Promise<Recipe> => {
+  ocrRecipe: async (
+    text: string,
+    provider: 'ollama' | 'openai' = 'ollama'
+  ): Promise<Recipe> => {
     const response = await fetch(`${API_URL}/recipes/ocr`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, provider }),
     });
     if (!response.ok) {
       throw new Error('Failed to organize recipe with AI');
