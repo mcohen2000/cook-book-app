@@ -1,8 +1,7 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import Recipe from '../models/Recipe';
 import { auth, isAuthor } from '../middleware/auth';
-import axios from 'axios';
-import { ocrLlmPrompt } from '../utils/prompt';
+import { callOpenAI, callOllama } from '../services/llmService';
 
 const router: Router = express.Router();
 
@@ -127,57 +126,25 @@ const deleteRecipe = async (
 
 // POST /api/recipes/ocr
 router.post('/ocr', async (req, res) => {
-  const { text } = req.body;
+  const { text, provider } = req.body;
   if (!text) {
     res.status(400).json({ error: 'Missing text in request body' });
     return;
   }
 
-  const llmUrl = process.env.LLM_URL;
-  if (!llmUrl) {
-    res.status(500).json({ error: 'LLM_URL environment variable not set' });
-    return;
-  }
-
-  const prompt = ocrLlmPrompt(text);
-
   try {
-    const response = await axios.post(`${llmUrl}`, {
-      model: 'llama3.2',
-      prompt,
-      stream: false,
-    });
-    let result = response.data.response || response.data;
-
-    let parsed;
-    try {
-      parsed = JSON.parse(result);
-      res.json({ result: parsed });
+    let result;
+    if (provider === 'openai') {
+      result = await callOpenAI(text);
+    } else if (provider === 'ollama') {
+      result = await callOllama(text);
+    } else {
+      res.status(400).json({ error: 'Unsupported LLM provider' });
       return;
-    } catch (err) {
-      const fixPrompt = `The following is invalid JSON. Please fix and return only valid JSON:\n\n${result}`;
-      const fixResponse = await axios.post(`${llmUrl}`, {
-        model: 'llama3.2',
-        prompt: fixPrompt,
-        stream: false,
-      });
-      let fixedResult = fixResponse.data.response || fixResponse.data;
-      try {
-        parsed = JSON.parse(fixedResult);
-        res.json({ result: parsed });
-        return;
-      } catch (err2) {
-        res.status(500).json({
-          error:
-            'Failed to parse LLM response as valid JSON, even after attempting to fix.',
-        });
-        return;
-      }
     }
-  } catch (error) {
-    console.error('Ollama error:', error);
-    res.status(500).json({ error: 'Failed to process with Ollama' });
-    return;
+    res.json({ result });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 });
 

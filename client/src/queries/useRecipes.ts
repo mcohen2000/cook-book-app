@@ -60,6 +60,12 @@ export const useDeleteRecipe = () => {
 
 export const useOcrRecipe = () => {
   return useMutation({
-    mutationFn: recipeService.ocrRecipe,
+    mutationFn: ({
+      text,
+      provider,
+    }: {
+      text: string;
+      provider: 'ollama' | 'openai';
+    }) => recipeService.ocrRecipe(text, provider),
   });
 };

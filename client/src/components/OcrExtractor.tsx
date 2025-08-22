@@ -20,6 +20,7 @@ export default function OcrExtractor({
   clearAiResult,
 }: OcrExtractorProps) {
   const [ocrLoading, setOcrLoading] = useState(false);
+  const [llmProvider, setLlmProvider] = useState<'ollama' | 'openai'>('ollama');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutate: organizeRecipe, isPending: aiLoading } = useOcrRecipe();
 
@@ -33,14 +34,17 @@ export default function OcrExtractor({
       const fileUrl = URL.createObjectURL(file);
       const { data } = await Tesseract.recognize(fileUrl, 'eng', {});
       setOcrLoading(false);
-      organizeRecipe(data.text, {
-        onSuccess: (organized) => {
-          onExtracted(organized);
-        },
-        onError: (err: any) => {
-          setError(err.message || 'Failed to organize recipe with AI');
-        },
-      });
+      organizeRecipe(
+        { text: data.text, provider: llmProvider },
+        {
+          onSuccess: (organized) => {
+            onExtracted(organized);
+          },
+          onError: (err: any) => {
+            setError(err.message || 'Failed to organize recipe with AI');
+          },
+        }
+      );
     } catch (err: any) {
       setError(err.message || 'Failed to extract or organize text.');
       setOcrLoading(false);
@@ -74,6 +78,27 @@ export default function OcrExtractor({
             className='hidden'
           />
         </label>
+      </div>
+
+      <div className='flex justify-center items-center mb-4'>
+        <label
+          htmlFor='llm-selector'
+          className='block text-sm font-medium text-gray-700 mr-2'
+        >
+          LLM Provider:
+        </label>
+        <select
+          id='llm-selector'
+          name='llm-selector'
+          className='block w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
+          value={llmProvider}
+          onChange={(e) =>
+            setLlmProvider(e.target.value as 'ollama' | 'openai')
+          }
+        >
+          <option value='ollama'>Ollama</option>
+          <option value='openai'>OpenAI</option>
+        </select>
       </div>
 
       {error && (
