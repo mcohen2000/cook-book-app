@@ -1,9 +1,7 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import Recipe from '../models/Recipe';
 import { auth, isAuthor } from '../middleware/auth';
-import axios from 'axios';
-import { ocrLlmPrompt } from '../utils/prompt';
-import OpenAI from 'openai';
+import { callOpenAI, callOllama } from '../services/llmService';
 
 const router: Router = express.Router();
 
@@ -134,122 +132,19 @@ router.post('/ocr', async (req, res) => {
     return;
   }
 
-  const prompt = ocrLlmPrompt(text);
-
-  if (provider === 'openai') {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    try {
-      console.log('Sending prompt to OpenAI:', prompt);
-      const completion = await openai.chat.completions.create({
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        model: 'gpt-5-nano',
-      });
-
-      let result = completion.choices[0].message.content;
-
-      if (!result) {
-        res
-          .status(500)
-          .json({ error: 'OpenAI response content was empty or null.' });
-        return;
-      }
-
-      let parsed;
-      try {
-        parsed = JSON.parse(result);
-        res.json({ result: parsed });
-        return;
-      } catch (err) {
-        const fixPrompt = `The following is invalid JSON. Please fix and return only valid JSON:\n\n${result}`;
-        const fixCompletion = await openai.chat.completions.create({
-          messages: [
-            {
-              role: 'user',
-              content: fixPrompt,
-            },
-          ],
-          model: 'gpt-4o-mini',
-        });
-        let fixedResult = fixCompletion.choices[0].message.content;
-        if (!fixedResult) {
-          res.status(500).json({
-            error: 'OpenAI fixed response content was empty or null.',
-          });
-          return;
-        }
-        try {
-          parsed = JSON.parse(fixedResult);
-          res.json({ result: parsed });
-          return;
-        } catch (err2) {
-          res.status(500).json({
-            error:
-              'Failed to parse OpenAI response as valid JSON, even after attempting to fix.',
-          });
-          return;
-        }
-      }
-    } catch (error) {
-      console.error('OpenAI error:', error);
-      res.status(500).json({ error: 'Failed to process with OpenAI' });
+  try {
+    let result;
+    if (provider === 'openai') {
+      result = await callOpenAI(text);
+    } else if (provider === 'ollama') {
+      result = await callOllama(text);
+    } else {
+      res.status(400).json({ error: 'Unsupported LLM provider' });
       return;
     }
-  } else if (provider === 'ollama') {
-    const llmUrl = process.env.LLM_URL;
-    if (!llmUrl) {
-      res.status(500).json({ error: 'LLM_URL environment variable not set' });
-      return;
-    }
-
-    try {
-      const response = await axios.post(`${llmUrl}`, {
-        model: 'llama3.2',
-        prompt,
-        stream: false,
-      });
-      let result = response.data.response || response.data;
-
-      let parsed;
-      try {
-        parsed = JSON.parse(result);
-        res.json({ result: parsed });
-        return;
-      } catch (err) {
-        const fixPrompt = `The following is invalid JSON. Please fix and return only valid JSON:\n\n${result}`;
-        const fixResponse = await axios.post(`${llmUrl}`, {
-          model: 'llama3.2',
-          prompt: fixPrompt,
-          stream: false,
-        });
-        let fixedResult = fixResponse.data.response || fixResponse.data;
-        try {
-          parsed = JSON.parse(fixedResult);
-          res.json({ result: parsed });
-          return;
-        } catch (err2) {
-          res.status(500).json({
-            error:
-              'Failed to parse LLM response as valid JSON, even after attempting to fix.',
-          });
-          return;
-        }
-      }
-    } catch (error) {
-      console.error('Ollama error:', error);
-      res.status(500).json({ error: 'Failed to process with Ollama' });
-      return;
-    }
-  } else {
-    res.status(400).json({ error: 'Unsupported LLM provider' });
-    return;
+    res.json({ result });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 });
 
