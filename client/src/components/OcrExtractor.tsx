@@ -81,24 +81,30 @@ export default function OcrExtractor({
       </div>
 
       <div className='flex justify-center items-center mb-4'>
-        <label
-          htmlFor='llm-selector'
-          className='block text-sm font-medium text-gray-700 mr-2'
-        >
-          LLM Provider:
-        </label>
-        <select
-          id='llm-selector'
-          name='llm-selector'
-          className='block w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
-          value={llmProvider}
-          onChange={(e) =>
-            setLlmProvider(e.target.value as 'ollama' | 'openai')
-          }
-        >
-          <option value='ollama'>Ollama</option>
-          <option value='openai'>OpenAI</option>
-        </select>
+        <div className='flex items-center p-1 space-x-1 bg-blue-50 border-2 border-blue-100 rounded-full'>
+          <button
+            type='button'
+            onClick={() => setLlmProvider('ollama')}
+            className={`px-5 py-2 text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none ${
+              llmProvider === 'ollama'
+                ? 'bg-white text-blue-600 shadow'
+                : 'text-gray-600 hover:bg-blue-100'
+            }`}
+          >
+            Ollama
+          </button>
+          <button
+            type='button'
+            onClick={() => setLlmProvider('openai')}
+            className={`px-5 py-2 text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none ${
+              llmProvider === 'openai'
+                ? 'bg-white text-blue-600 shadow'
+                : 'text-gray-600 hover:bg-blue-100'
+            }`}
+          >
+            OpenAI
+          </button>
+        </div>
       </div>
 
       {error && (

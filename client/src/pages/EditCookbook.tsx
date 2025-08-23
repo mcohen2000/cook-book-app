@@ -29,7 +29,7 @@ export default function EditCookbook() {
     if (cookbook) {
       setInitialData({
         title: cookbook.title,
-        description: '',
+        description: cookbook.description || '',
       });
     }
   }, [cookbook]);

@@ -21,18 +21,11 @@ const ConfirmDeleteModal: FC<ConfirmDeleteModalProps> = ({
   const { closeModal } = useModal();
 
   return (
-    <div style={{ minWidth: 300 }}>
-      <h2
-        style={{
-          fontWeight: 600,
-          fontSize: 20,
-          marginBottom: 16,
-          color: '#ef4444',
-        }}
-      >
+    <div className='min-w-[300px]'>
+      <h2 className='text-xl font-semibold mb-4 text-red-500'>
         Confirm Delete
       </h2>
-      <div style={{ marginBottom: 20, color: '#374151', fontSize: 16 }}>
+      <div className='mb-5 text-base text-gray-700'>
         {message ? (
           <span>{message}</span>
         ) : (
@@ -43,43 +36,22 @@ const ConfirmDeleteModal: FC<ConfirmDeleteModalProps> = ({
           </span>
         )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+      <div className='flex justify-end gap-2'>
         <button
           type='button'
           onClick={closeModal}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#6b7280',
-            fontSize: 16,
-            padding: '8px 16px',
-            borderRadius: 4,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-          }}
+          className='flex items-center rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition-colors cursor-pointer hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50'
           disabled={loading}
         >
-          <XIcon className='w-[20px] h-[20px] mr-1' /> Cancel
+          <XIcon className='mr-1 h-[20px] w-[20px]' /> Cancel
         </button>
         <button
           type='button'
           onClick={onConfirm}
-          style={{
-            background: '#ef4444',
-            border: 'none',
-            color: 'white',
-            fontSize: 16,
-            padding: '8px 16px',
-            borderRadius: 4,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            fontWeight: 500,
-          }}
+          className='flex items-center rounded-md bg-red-500 px-4 py-2 font-medium text-white transition-colors cursor-pointer hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50'
           disabled={loading}
         >
-          <CheckIcon className='w-[20px] h-[20px] mr-1' />
+          <CheckIcon className='mr-1 h-[20px] w-[20px]' />
           {loading ? 'Deleting...' : 'Delete'}
         </button>
       </div>
