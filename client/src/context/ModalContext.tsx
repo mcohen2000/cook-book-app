@@ -7,6 +7,7 @@ import React, {
   useRef,
   useEffect,
 } from 'react';
+import XIcon from '../components/icons/XIcon';
 
 interface ModalContextType {
   openModal: (content: ReactNode) => void;
@@ -90,18 +91,10 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
           >
             <button
               onClick={closeModal}
-              style={{
-                position: 'absolute',
-                top: 8,
-                right: 8,
-                background: 'transparent',
-                border: 'none',
-                fontSize: 24,
-                cursor: 'pointer',
-              }}
+              className='absolute top-3 right-3 rounded-full p-1 text-gray-400 transition-colors cursor-pointer hover:bg-gray-100 hover:text-gray-600'
               aria-label='Close modal'
             >
-              &times;
+              <XIcon className='h-6 w-6' />
             </button>
             {modalContent}
           </div>
