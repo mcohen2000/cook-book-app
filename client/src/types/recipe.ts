@@ -6,6 +6,7 @@ export interface Recipe {
   instructions: string[];
   cookingTime: number;
   servings: number;
+  nutrition?: any;
   createdAt?: string;
   author?: string;
 }
