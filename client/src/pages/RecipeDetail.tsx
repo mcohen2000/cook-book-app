@@ -152,7 +152,11 @@ export default function RecipeDetail() {
           </h1>
           <p className='text-gray-600 mb-8'>{recipe.description}</p>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+          <div
+            className={`grid grid-cols-1${
+              recipe.nutrition ? ' md:grid-cols-2' : ''
+            } gap-8`}
+          >
             {/* Left Column - Recipe Details */}
             <div className='space-y-6'>
               <div>
@@ -191,7 +195,7 @@ export default function RecipeDetail() {
             </div>
 
             {/* Right Column - Nutrition Label */}
-            <NutritionLabel servings={recipe.servings} />
+            {recipe.nutrition && <NutritionLabel servings={recipe.servings} />}
           </div>
 
           <div className='mt-8 flex items-center justify-between text-sm text-gray-500'>

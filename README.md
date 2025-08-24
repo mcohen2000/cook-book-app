@@ -1,10 +1,10 @@
 # Cook Book App
 
-A full-stack web application designed to help you effortlessly digitize, organize, and share your favorite recipes. This isn't just another recipe app, but it leverages the power of AI to make recipe management smarter and more intuitive.
+A full-stack web application that streamlines the process of digitizing, organizing, and sharing recipes. By integrating AI, it goes beyond traditional recipe apps to provide smarter, more intuitive recipe management.
 
 ## About The Project
 
-The Cook Book App was born from a love of cooking and a frustration with managing scattered recipes—from handwritten cards to screenshots and PDFs. This application provides a central, beautiful, and easy-to-navigate digital cookbook.
+The Cook Book App was born from a love of cooking and a frustration with managing scattered recipes, from handwritten cards to screenshots and PDFs. This application provides a central, beautiful, and easy-to-navigate digital cookbook.
 
 The standout feature is the **AI-powered Recipe Extractor**. Simply upload a photo or PDF of a recipe, and the application uses Optical Character Recognition (OCR) to read the text, then leverages a Large Language Model (LLM) to intelligently parse and format it into a structured, ready-to-use recipe. This demonstrates a practical application of modern AI technologies to solve a common real-world problem.
 
