@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import ChefHatIcon from './icons/ChefHatIcon';
 
 interface SideDrawerProps {
   open: boolean;
@@ -27,8 +28,16 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose }) => {
         aria-label='Mobile Navigation Drawer'
       >
         <div className='flex flex-col h-full p-6'>
-          <Link to='/' onClick={onClose}>
-            <h2 className='text-xl font-bold mb-8 text-blue-500 hover:text-blue-600 transition-colors'>
+          <Link
+            to='/'
+            onClick={onClose}
+            className='flex items-center space-x-2 mb-8'
+          >
+            <ChefHatIcon
+              color='#2b7fff'
+              className='w-[32px] min-w-[32px] h-[32px] min-h-[32px]'
+            />
+            <h2 className='text-xl font-bold text-blue-500 hover:text-blue-600 transition-colors'>
               Cook Book
             </h2>
           </Link>

@@ -9,6 +9,8 @@ import PlusIcon from './icons/PlusIcon';
 import SideDrawer from './SideDrawer';
 import { useState } from 'react';
 import HamburgerIcon from './icons/HamburgerIcon';
+import Logo from '/logo.svg';
+import ChefHatIcon from './icons/ChefHatIcon';
 
 const Navbar = () => {
   const { user } = useContext(AuthContext) || {};
@@ -39,7 +41,11 @@ const Navbar = () => {
             >
               <HamburgerIcon className='w-6 h-6 text-gray-700' />
             </button>
-            <Link to='/'>
+            <Link to='/' className='flex items-center space-x-2'>
+              <ChefHatIcon
+                color='#2b7fff'
+                className='w-[32px] min-w-[32px] h-[32px] min-h-[32px]'
+              />
               <h1 className='text-2xl font-bold text-blue-500 hover:text-blue-600 transition-colors'>
                 Cook Book
               </h1>
