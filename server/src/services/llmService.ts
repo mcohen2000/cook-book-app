@@ -14,7 +14,7 @@ export const callOpenAI = async (text: string) => {
           content: prompt,
         },
       ],
-      model: 'gpt-4o-mini',
+      model: 'gpt-5-nano',
     });
 
     let result = completion.choices[0].message.content;
@@ -36,7 +36,7 @@ export const callOpenAI = async (text: string) => {
             content: fixPrompt,
           },
         ],
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-nano',
       });
       let fixedResult = fixCompletion.choices[0].message.content;
       if (!fixedResult) {
