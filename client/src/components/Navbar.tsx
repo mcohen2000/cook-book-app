@@ -9,7 +9,6 @@ import PlusIcon from './icons/PlusIcon';
 import SideDrawer from './SideDrawer';
 import { useState } from 'react';
 import HamburgerIcon from './icons/HamburgerIcon';
-import Logo from '/logo.svg';
 import ChefHatIcon from './icons/ChefHatIcon';
 
 const Navbar = () => {
@@ -46,8 +45,8 @@ const Navbar = () => {
                 color='#2b7fff'
                 className='w-[32px] min-w-[32px] h-[32px] min-h-[32px]'
               />
-              <h1 className='text-2xl font-bold text-blue-500 hover:text-blue-600 transition-colors'>
-                Cook Book
+              <h1 className='text-2xl font-bold text-blue-500 hover:text-blue-600 transition-colors sm:block hidden'>
+                Cookbook App
               </h1>
             </Link>
             {/* Desktop nav links */}
