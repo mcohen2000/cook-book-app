@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import recipeRoutes from './src/routes/recipes';
-import userRoutes from './src/routes/users';
-import cookbooksRouter from './src/routes/books';
+import recipeRoutes from './routes/recipes';
+import userRoutes from './routes/users';
+import cookbooksRouter from './routes/books';
 dotenv.config();
 
 const app = express();
