@@ -85,6 +85,18 @@ To get a local copy up and running, follow these simple steps.
     OPENAI_API_KEY='your_openai_api_key'
     ```
 
+    Seed sample recipes and cookbooks so Browse has more than one page of recipes (the app shows 12 per page). MongoDB needs to be running first, and `server/.env` needs `MONGODB_URI` or `MONGO_URI`:
+
+    ```sh
+    npm run seed
+    ```
+
+    The script creates a local account you can log in with:
+    - Email: `seed@cookbook.local`
+    - Password: `password123`
+
+    Running it again replaces only that account's recipes and cookbooks.
+
     Start the server:
 
     ```sh
